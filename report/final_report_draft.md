@@ -4,6 +4,8 @@
 
 This project studies supervised binary classification for the MetroPT-3 air compressor dataset. The goal is to classify sensor records as normal operation or failure-risk/anomaly.
 
+Project decision history, reproducibility notes, commands run, problems encountered, and fixes applied are tracked in `PROJECT_LOG.md`. Report-ready explanations are collected in `report/REPORT_NOTES.md`.
+
 ## 2. Dataset
 
 The dataset is the MetroPT-3 Dataset from the UCI Machine Learning Repository. Raw data files are stored locally in `data/raw/` and are not committed to GitHub.

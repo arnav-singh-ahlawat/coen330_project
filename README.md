@@ -41,6 +41,8 @@ See `data/data_link.txt` for the dataset source.
 
 ## Workflow
 
+Project decisions, reproducibility notes, commands, problems, fixes, and pending results are tracked in `PROJECT_LOG.md`. Report-ready explanations are collected in `report/REPORT_NOTES.md`.
+
 Train a baseline model:
 
 ```bash
