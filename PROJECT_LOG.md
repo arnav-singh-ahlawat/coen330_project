@@ -20,6 +20,11 @@ Raw data file expected locally:
 data/raw/MetroPT3(AirCompressor).csv
 ```
 
+Confirmed raw data after successful preprocessing:
+
+- Raw shape: 1,516,948 rows and 17 columns
+- Timestamp column: `timestamp`
+
 ## 3. Machine Learning Task
 
 Task type: supervised binary classification.
@@ -35,7 +40,7 @@ Target column:
 
 Labeling rule: failure-risk is defined as one hour before each known failure start time until the failure end time. All other timestamps/windows are labeled normal.
 
-Status: Pending until known failure windows are configured in `src/config.py`.
+Status: Configured in `src/config.py` using the known failure windows. Each labeled failure-risk window starts one hour before the known failure start and ends at the known failure end.
 
 ## 5. Feature Engineering Plan
 
@@ -49,7 +54,7 @@ For each numeric sensor, compute:
 - Maximum
 - Last value
 
-Current implementation status: 1-minute windows with mean, standard deviation, minimum, maximum, last value, and row count have been implemented.
+Current implementation status: 1-minute windows with mean, standard deviation, minimum, maximum, last value, and row count have been implemented and confirmed by running `python src/preprocessing.py`.
 
 ## 6. Validation Strategy
 
@@ -90,7 +95,7 @@ Main metric: F1-score.
 
 Secondary metric: recall.
 
-Reason: failure-risk/anomaly classification may be imbalanced. Accuracy alone can be misleading if the normal class is much larger than the failure-risk class.
+Reason: the confirmed processed dataset is highly imbalanced. Accuracy alone can be misleading because the normal class is much larger than the failure-risk class. F1-score and recall should be emphasized, especially recall for the failure-risk class.
 
 Status: Pending verified model results.
 
@@ -123,13 +128,28 @@ python -m compileall src
 python src/preprocessing.py
 ```
 
-Result: `python -m compileall src` passed. `python src/preprocessing.py` exited with a clear error because failure windows are not yet configured.
+Result: `python -m compileall src` passed. After the failure windows were configured, `python src/preprocessing.py` created `data/processed/windowed_labeled_data.csv`.
+
+Confirmed preprocessing run:
+
+```bash
+python src/preprocessing.py
+```
+
+Confirmed input and output:
+
+- Raw input file: `data/raw/MetroPT3(AirCompressor).csv`
+- Raw shape: 1,516,948 rows and 17 columns
+- Timestamp column: `timestamp`
+- Processed output file: `data/processed/windowed_labeled_data.csv`
+- Final processed shape: 252,720 rows and 78 columns
+- Processed file size: about 168 MB
 
 ## 11. Problems Encountered
 
 - `python src/preprocessing.py` originally ran with no useful output and did not clearly show whether `data/processed/windowed_labeled_data.csv` was created.
 - `src/preprocessing.py` originally only defined an sklearn numeric preprocessing pipeline and did not run the data preparation workflow.
-- `FAILURE_RISK_WINDOWS` is currently empty in `src/config.py`, so valid supervised labels cannot yet be generated from failure windows.
+- `FAILURE_RISK_WINDOWS` was empty in `src/config.py`, so valid supervised labels could not be generated from failure windows and `data/processed/windowed_labeled_data.csv` remained absent.
 - The timestamp column must be detected reliably before time-window aggregation.
 - Final model results do not exist yet and must not be invented.
 
@@ -143,6 +163,8 @@ Result: `python -m compileall src` passed. `python src/preprocessing.py` exited 
 - Added explicit progress messages and final dataset reporting to preprocessing.
 - Added a clear error path when failure windows are missing.
 - Added a clear error path when a timestamp column cannot be found.
+- Configured the known failure-risk windows in `src/config.py`, with each risk interval beginning one hour before failure start.
+- Updated `src/preprocessing.py` so terminal execution calls `main()`, parses the detected timestamp column as datetime, aggregates 1-minute features, labels the windowed data, and writes `data/processed/windowed_labeled_data.csv`.
 
 ## 13. Results Generated
 
@@ -150,9 +172,16 @@ Model metrics: Pending.
 
 Plots: Pending.
 
-Processed windowed labeled dataset: Pending because `FAILURE_RISK_WINDOWS` is not yet configured.
+Processed windowed labeled dataset: Confirmed. Local rerun created `data/processed/windowed_labeled_data.csv` with 252,720 rows and 78 columns.
 
-Confirmed current behavior: preprocessing does not create fake labels or fake results. It exits with a clear missing-failure-windows error.
+Confirmed class balance:
+
+- Class 0 normal: 247,520 windows, 97.94%
+- Class 1 failure-risk/anomaly: 5,200 windows, 2.06%
+
+Interpretation: the dataset is highly imbalanced. Accuracy alone is not a reliable main metric. The evaluation should emphasize F1-score and recall, especially recall for the failure-risk class, while also reporting precision, ROC-AUC when possible, and the confusion matrix.
+
+Confirmed current behavior before the latest fix: preprocessing did not create fake labels or fake results. It exited with a clear missing-failure-windows error.
 
 ## 14. Report Notes
 
@@ -163,6 +192,7 @@ The final report should explain:
 - How labels are defined from known failure windows.
 - Why 1-minute windows are used.
 - Why time-based splitting is used instead of random splitting.
+- Why the confirmed 97.94% normal / 2.06% failure-risk class balance makes accuracy insufficient by itself.
 - Why F1-score and recall matter for the failure-risk class.
 - Which results are verified and which are pending.
 
@@ -170,9 +200,6 @@ Detailed report-ready notes are collected in `report/REPORT_NOTES.md`.
 
 ## 15. Next Steps
 
-- Add the known MetroPT-3 failure windows to `src/config.py`.
-- Add last-value aggregation to the 1-minute feature engineering function.
-- Run `python src/preprocessing.py` and confirm `data/processed/windowed_labeled_data.csv` is created.
 - Implement the 70/15/15 chronological train/validation/test split.
 - Train and compare Logistic Regression, Decision Tree, Random Forest, Extra Trees, and HistGradientBoostingClassifier.
 - Generate verified metrics and confusion matrix plots.
@@ -185,3 +212,5 @@ Detailed report-ready notes are collected in `report/REPORT_NOTES.md`.
 | 2026-06-12 | Codex | Created project tracking and report notes files; updated README and final report draft references. | Keep project decisions and reproducibility notes organized for the COEN 330 report. | `PROJECT_LOG.md`, `report/REPORT_NOTES.md`, `README.md`, `report/final_report_draft.md` | Confirmed after file creation. | Results remain pending until metrics are generated. |
 | 2026-06-12 | Codex | Converted preprocessing into a runnable data preparation script with timestamp detection and 1-minute window features. | `python src/preprocessing.py` previously ran without clear output and did not confirm processed data creation. | `src/preprocessing.py`, `src/data_loading.py`, `src/features.py`, `src/config.py` | Confirmed error path: preprocessing exits clearly because failure windows are missing. | No fake labels or model results generated. |
 | 2026-06-12 | Codex | Added last-value aggregation to 1-minute window features. | Match the documented feature engineering plan for each numeric sensor. | `src/features.py`, `PROJECT_LOG.md`, `report/REPORT_NOTES.md` | Confirmed. `python -m compileall src` passed. `python src/preprocessing.py` exits clearly because failure windows are missing. | Full processed output remains pending until failure windows are configured. |
+| 2026-06-12 | Codex | Configured failure-risk labeling windows and fixed terminal preprocessing execution. | `python src/preprocessing.py` ran but `data/processed` stayed empty because failure windows were not configured. | `src/config.py`, `src/preprocessing.py`, `PROJECT_LOG.md`, `report/REPORT_NOTES.md` | Confirmed. `python src/preprocessing.py` created `data/processed/windowed_labeled_data.csv`. | Output was pending until rerun; no raw data, model files, or fake model results added. |
+| 2026-06-12 | Codex | Recorded confirmed preprocessing output and class balance. | Preprocessing now runs successfully and produced real processed dataset statistics for the report. | `PROJECT_LOG.md`, `report/REPORT_NOTES.md`, `report/final_report_draft.md` | Confirmed raw shape: 1,516,948 x 17. Confirmed processed shape: 252,720 x 78. Confirmed class balance: 247,520 normal windows and 5,200 failure-risk/anomaly windows. | Dataset is highly imbalanced; emphasize F1-score and recall. No raw or processed CSV files should be committed. |

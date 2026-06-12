@@ -5,6 +5,49 @@ import pandas as pd
 from src.config import TARGET_COLUMN, TIMESTAMP_COLUMN
 
 
+def create_minute_window_features(df, timestamp_column=TIMESTAMP_COLUMN, window="1min"):
+    """Aggregate raw sensor records into fixed-width timestamp windows."""
+    if timestamp_column not in df.columns:
+        raise ValueError(f"Timestamp column '{timestamp_column}' is missing.")
+
+    windowed = df.copy()
+    windowed[timestamp_column] = pd.to_datetime(windowed[timestamp_column], errors="coerce")
+    invalid_count = windowed[timestamp_column].isna().sum()
+    if invalid_count == len(windowed):
+        raise ValueError(f"Column '{timestamp_column}' could not be parsed as datetimes.")
+
+    windowed = windowed.dropna(subset=[timestamp_column]).sort_values(timestamp_column)
+    numeric = windowed.select_dtypes(include=["number", "bool"]).copy()
+    drop_columns = [
+        column
+        for column in numeric.columns
+        if column == TARGET_COLUMN or column.lower().startswith("unnamed")
+    ]
+    numeric = numeric.drop(columns=drop_columns, errors="ignore")
+    if numeric.empty:
+        raise ValueError("No numeric sensor columns were found for window feature creation.")
+
+    numeric[timestamp_column] = windowed[timestamp_column]
+    aggregates = (
+        numeric.set_index(timestamp_column)
+        .resample(window)
+        .agg(["mean", "std", "min", "max", "last"])
+        .dropna(how="all")
+    )
+    aggregates.columns = [
+        f"{column}_{stat}" for column, stat in aggregates.columns.to_flat_index()
+    ]
+    aggregates = aggregates.reset_index().rename(columns={timestamp_column: "window_start"})
+    aggregates["row_count"] = (
+        windowed.set_index(timestamp_column)
+        .resample(window)
+        .size()
+        .reindex(aggregates["window_start"])
+        .to_numpy()
+    )
+    return aggregates
+
+
 def add_time_features(df, timestamp_column=TIMESTAMP_COLUMN):
     """Add simple calendar features when a timestamp column is available."""
     if timestamp_column not in df.columns:

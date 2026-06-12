@@ -14,25 +14,47 @@ The dataset used for this project is the MetroPT-3 Dataset from the UCI Machine 
 
 The raw CSV file is stored locally in `data/raw/MetroPT3(AirCompressor).csv`. It is not committed to GitHub because the file is large. The repository should contain code, documentation, report notes, metrics, and plots, while raw data remains local.
 
+Confirmed raw data details after running `python src/preprocessing.py`:
+
+- Raw file: `data/raw/MetroPT3(AirCompressor).csv`
+- Raw shape: 1,516,948 rows and 17 columns
+- Timestamp column: `timestamp`
+
 ## 3. Preprocessing Explanation
 
 The preprocessing workflow loads the raw MetroPT-3 CSV file from `data/raw/`, standardizes column names, detects the timestamp column, and prepares the data for time-window feature engineering.
 
 The preprocessing script is designed to print progress messages so that each step is visible when the script runs. If the timestamp column cannot be detected, the script exits with a clear error instead of producing unreliable output.
 
+The confirmed preprocessing command is:
+
+```bash
+python src/preprocessing.py
+```
+
+This command converts raw timestamped sensor readings into 1-minute windows, applies the configured failure-risk windows, and writes the processed dataset to `data/processed/windowed_labeled_data.csv`.
+
+Confirmed processed output:
+
+- Final shape: 252,720 rows and 78 columns
+- File size: about 168 MB
+- The processed CSV is a generated local artifact and should not be committed.
+
 ## 4. Labeling Explanation
 
 The target variable is binary. A value of `0` represents normal operation, and a value of `1` represents a failure-risk/anomaly condition.
 
-The planned labeling rule defines failure-risk as the period from one hour before each known failure start time through the failure end time. All other timestamps or windows are labeled normal. This rule is intended to capture both the failure period and the immediate warning period before failure.
+The labeling rule defines failure-risk as the period from one hour before each known failure start time through the failure end time. All other timestamps or windows are labeled normal. This rule is intended to capture both the failure period and the immediate warning period before failure.
 
-Label generation is Pending until known failure windows are configured in `src/config.py`.
+The known failure periods used for labeling are April 18, 2020 00:00 to April 18, 2020 23:59; May 29, 2020 23:30 to May 30, 2020 06:00; June 5, 2020 10:00 to June 7, 2020 14:30; and July 15, 2020 14:30 to July 15, 2020 19:00. In the generated target, each of these intervals is expanded backward by one hour to mark the failure-risk period.
 
 ## 5. Feature Engineering Explanation
 
 The MetroPT-3 data is time-series data, so raw sensor readings are aggregated into 1-minute windows. Windowing reduces noise, creates consistent examples for classification, and allows the model to learn short-term behavior patterns instead of relying on individual raw sensor rows.
 
-The feature engineering plan is to compute mean, standard deviation, minimum, maximum, and last value for each numeric sensor in each 1-minute window. Current implementation includes mean, standard deviation, minimum, maximum, last value, and row count.
+The feature engineering step parses the `timestamp` column as datetime and groups sensor readings into 1-minute windows. For each numeric sensor column, the preprocessing pipeline computes mean, standard deviation, minimum, maximum, and last value. It also adds `row_count` for each 1-minute window. The resulting one-row-per-minute table is then labeled with the binary target described above.
+
+The confirmed generated feature table contains 252,720 1-minute windows and 78 columns, including engineered sensor statistics, `row_count`, and the binary target label.
 
 ## 6. Model Selection Explanation
 
@@ -52,15 +74,28 @@ Implementation status: Pending.
 
 The selected metrics are accuracy, precision, recall, F1-score, ROC-AUC when possible, and confusion matrix.
 
-The main metric is F1-score because the failure-risk/anomaly class may be imbalanced and both false positives and false negatives matter. Recall is the secondary metric because missing true failure-risk windows is especially important in a predictive maintenance setting.
+The main metric is F1-score because the confirmed processed dataset is highly imbalanced and both false positives and false negatives matter. Recall is the secondary metric because missing true failure-risk windows is especially important in a predictive maintenance setting.
+
+Confirmed class balance in `data/processed/windowed_labeled_data.csv`:
+
+- Class 0 normal: 247,520 windows, 97.94%
+- Class 1 failure-risk/anomaly: 5,200 windows, 2.06%
+
+Because the normal class accounts for 97.94% of the processed windows, accuracy alone is not a reliable main metric. A model could achieve high accuracy while still missing many failure-risk windows. The report should emphasize F1-score and recall, especially recall for class 1, while still reporting precision, ROC-AUC when possible, and the confusion matrix.
 
 Metrics are Pending until models are trained and evaluated.
 
 ## 9. Results Summary
 
-Results are Pending.
+Model results are Pending.
 
-No model performance should be reported until the labeling windows are configured, preprocessing successfully generates the labeled window dataset, models are trained, and metrics are verified.
+No model performance should be reported until models are trained and metrics are verified.
+
+Confirmed preprocessing results are available and can be reported:
+
+- Raw input: 1,516,948 rows and 17 columns
+- Processed output: 252,720 rows and 78 columns
+- Class balance: 247,520 normal windows and 5,200 failure-risk/anomaly windows
 
 ## 10. Error Analysis Notes
 
@@ -70,13 +105,13 @@ After model evaluation, this section should discuss false positives, false negat
 
 ## 11. Limitations
 
-Current limitations include missing configured failure windows, pending final labeled dataset generation, pending chronological split implementation, and pending verified model results.
+Current limitations include pending chronological split implementation, pending verified model results, and strong class imbalance in the processed dataset.
 
 The labeling strategy depends on known failure start and end times. If those times are incomplete or inaccurate, the supervised labels may be noisy.
 
 ## 12. Future Work
 
-Future work includes configuring known failure windows, completing the 1-minute feature engineering plan, implementing the chronological train/validation/test split, comparing all selected models, generating verified metrics, and producing final plots for the report.
+Future work includes implementing the chronological train/validation/test split, comparing all selected models, generating verified metrics, and producing final plots for the report.
 
 Additional improvements could include tuning model hyperparameters, analyzing feature importance, testing different window sizes, and improving threshold selection for the failure-risk class.
 
