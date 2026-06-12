@@ -1,4 +1,4 @@
-"""Demo entrypoint for the MetroPT-3 classifier."""
+"""Demo entrypoint for the MetroPT-3 failure-risk classifier."""
 
 from pathlib import Path
 import sys

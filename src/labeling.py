@@ -1,4 +1,4 @@
-"""Label creation for supervised binary classification."""
+"""Label creation for supervised failure-risk binary classification."""
 
 import pandas as pd
 
@@ -23,7 +23,7 @@ def label_from_failure_windows(
     target_column=TARGET_COLUMN,
     failure_risk_windows=None,
 ):
-    """Create a binary target using configured failure-risk timestamp windows."""
+    """Create a binary early-warning target from failure-risk timestamp windows."""
     windows = FAILURE_RISK_WINDOWS if failure_risk_windows is None else failure_risk_windows
     if not windows:
         raise ValueError(

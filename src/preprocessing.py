@@ -1,4 +1,4 @@
-"""Preprocessing pipeline construction and windowed dataset generation."""
+"""Preprocessing and windowed dataset generation for failure-risk prediction."""
 
 import sys
 from pathlib import Path
@@ -68,7 +68,7 @@ def run_preprocessing(
     windowed = create_minute_window_features(raw, timestamp_column=timestamp_column)
     print(f"Number of 1-minute windows: {len(windowed)}")
 
-    print("Adding binary target from configured failure windows")
+    print("Adding binary failure-risk target from configured failure windows")
     labeled = label_from_failure_windows(
         windowed,
         timestamp_column="window_start",

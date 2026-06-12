@@ -1,6 +1,6 @@
 # Demo
 
-This folder contains a small command-line demo for the MetroPT-3 binary classifier.
+This folder contains a small command-line demo for the MetroPT-3 failure-risk classifier.
 
 Before running the demo:
 
@@ -15,4 +15,4 @@ Run:
 python demo/demo.py
 ```
 
-The demo prints predictions for a few local records. It does not include or commit raw dataset rows.
+The demo prints normal versus failure-risk/anomaly predictions for a few local samples. It does not include or commit raw dataset rows.

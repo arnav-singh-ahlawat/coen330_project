@@ -1,4 +1,4 @@
-"""Feature engineering for MetroPT-3 classification."""
+"""Feature engineering for MetroPT-3 failure-risk prediction."""
 
 import pandas as pd
 
@@ -6,7 +6,7 @@ from src.config import TARGET_COLUMN, TIMESTAMP_COLUMN
 
 
 def create_minute_window_features(df, timestamp_column=TIMESTAMP_COLUMN, window="1min"):
-    """Aggregate raw sensor records into fixed-width timestamp windows."""
+    """Aggregate raw sensor records into fixed-width 1-minute windows."""
     if timestamp_column not in df.columns:
         raise ValueError(f"Timestamp column '{timestamp_column}' is missing.")
 

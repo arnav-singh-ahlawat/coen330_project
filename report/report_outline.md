@@ -2,7 +2,7 @@
 
 ## Title
 
-Supervised Binary Classification for Failure-Risk Detection in the MetroPT-3 Air Compressor Dataset
+Failure-Risk Prediction for a Metro Train Compressor Using Machine Learning
 
 ## Sections
 

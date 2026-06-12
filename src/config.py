@@ -1,4 +1,4 @@
-"""Project configuration for the MetroPT-3 classification workflow."""
+"""Project configuration for the MetroPT-3 failure-risk prediction workflow."""
 
 from pathlib import Path
 
@@ -15,18 +15,22 @@ PLOTS_DIR = RESULTS_DIR / "plots"
 RAW_DATA_FILE = RAW_DATA_DIR / "MetroPT3(AirCompressor).csv"
 PROCESSED_DATA_FILE = PROCESSED_DATA_DIR / "metropt3_labeled_features.csv"
 WINDOWED_LABELED_DATA_FILE = PROCESSED_DATA_DIR / "windowed_labeled_data.csv"
-MODEL_FILE = MODELS_DIR / "metropt3_binary_classifier.joblib"
+MODEL_FILE = MODELS_DIR / "final_model.joblib"
 METRICS_FILE = RESULTS_DIR / "metrics_table.csv"
+TEST_METRICS_FILE = RESULTS_DIR / "test_metrics.csv"
+THRESHOLD_TABLE_FILE = RESULTS_DIR / "threshold_table.csv"
+TRAINING_OUTPUT_FILE = RESULTS_DIR / "training_output.txt"
 CONFUSION_MATRIX_PLOT = PLOTS_DIR / "confusion_matrix.png"
+VALIDATION_PROBABILITY_PLOT = PLOTS_DIR / "validation_probability_distribution.png"
+TEST_PROBABILITY_PLOT = PLOTS_DIR / "test_probability_distribution.png"
+PRECISION_RECALL_CURVE_PLOT = PLOTS_DIR / "precision_recall_curve.png"
 
 TARGET_COLUMN = "target"
 TIMESTAMP_COLUMN = "timestamp"
 
 RANDOM_STATE = 42
-TEST_SIZE = 0.2
 
-# If the raw data does not already contain a binary target column, configure
-# timestamp windows here after documenting the project labeling assumptions.
+# Configure timestamp windows for the binary failure-risk target.
 # Format: ("YYYY-MM-DD HH:MM:SS", "YYYY-MM-DD HH:MM:SS")
 #
 # Failure-risk starts one hour before each known failure start and continues
