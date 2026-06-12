@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+.env
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Raw/large dataset files
+data/raw/
+*.zip
+
+# Do NOT ignore all CSVs globally because results/metrics_table.csv should be committed
+# Ignore raw and processed data specifically
+data/raw/*
+data/processed/*.csv
+
+# But allow dataset instructions and folder placeholders
+!data/data_link.txt
+!data/processed/.gitkeep
+
+# Models can be large
+models/*.pkl
+models/*.joblib
+
+# OS files
+.DS_Store
+Thumbs.db

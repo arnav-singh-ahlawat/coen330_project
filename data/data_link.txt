@@ -1,0 +1,11 @@
+Dataset: MetroPT-3 Dataset
+Source: UCI Machine Learning Repository
+Download page: https://archive.ics.uci.edu/dataset/791/metropt+3+dataset
+
+The raw dataset files are not committed to GitHub because they are large.
+
+To reproduce the project:
+1. Download the MetroPT-3 dataset from UCI.
+2. Place the raw CSV file inside:
+
+data/raw/
