@@ -70,6 +70,8 @@ The verified split sizes are:
 - Validation: 30,721 windows; class 0 = 27,798, class 1 = 2,923
 - Test: 77,587 windows; class 0 = 77,257, class 1 = 330
 
+A secondary stratified window-level baseline is included only as an optimistic comparison. It uses a stratified random split over processed windows, so it can mix windows from the same failure events across train and test. This baseline checks whether the engineered features can separate labeled risk windows when event independence is not enforced, but it should not be interpreted as deployment performance.
+
 ## 6. Evaluation Metrics
 
 The project reports recall, F2-score, F1-score, the confusion matrix, precision, ROC-AUC when possible, and accuracy.
@@ -112,6 +114,18 @@ Final test confusion matrix counts for labels `[normal, failure_risk]`:
 
 The high test accuracy is misleading because the held-out test block contains many more normal windows than failure-risk windows. The more important metrics show that the model did not detect any of the 330 true failure-risk windows in event 4.
 
+The secondary stratified window-level baseline produced much stronger results:
+
+| Model | Accuracy | Precision | Recall | F1 | F2 | ROC-AUC |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Logistic Regression baseline | 0.9636 | 0.3573 | 0.9615 | 0.5210 | 0.7185 | 0.9849 |
+| Decision Tree | 0.9951 | 0.8421 | 0.9385 | 0.8877 | 0.9175 | 0.9687 |
+| Random Forest | 0.9963 | 0.8638 | 0.9760 | 0.9165 | 0.9513 | 0.9950 |
+| Extra Trees | 0.9963 | 0.8695 | 0.9673 | 0.9158 | 0.9460 | 0.9926 |
+| HistGradientBoostingClassifier | 0.9955 | 0.8301 | 0.9817 | 0.8996 | 0.9471 | 0.9986 |
+
+These results come from `src/stratified_baseline.py`, using a stratified train/test split with 202,176 train windows and 50,544 test windows. They are included to show how the evaluation can look when windows are randomly mixed, not to replace the event-aware test result.
+
 ## 8. Discussion
 
 The final event-aware test result demonstrates poor generalization to an unseen failure event. The model achieved strong validation performance on event 3, but it failed to identify any positive windows in held-out event 4. This should be presented as a major limitation of supervised learning with only four independent failure events.
@@ -120,8 +134,12 @@ This finding should not be hidden or treated as a coding error. The preprocessin
 
 The dataset limitation is important: four documented failures provide very few independent examples of failure-risk behavior. A supervised model may learn event-specific patterns that do not generalize. More labeled failure events would be needed to better estimate generalization and improve reliability.
 
+The stratified baseline reinforces this point. The processed dataset contains 5,200 positive windows, but those windows come from only four independent failure events. A random or stratified window-level split can place similar windows from the same event into both training and testing, which makes performance look much stronger than the event-aware held-out result. This comparison demonstrates why random window-level splits can be misleading for predictive maintenance.
+
 ## 9. Conclusion
 
 This project provides a reproducible supervised learning workflow for failure-risk prediction in a metro train compressor using the MetroPT-3 dataset. The project keeps the raw dataset local, creates verified 1-minute labeled windows, uses an event-aware validation strategy, and reports metrics that reflect predictive maintenance priorities.
 
 The current final model is not deployment-ready. Although test accuracy is high, recall, F2-score, and F1-score for the failure-risk class are all 0.0 on the held-out failure event. The main conclusion is that event-aware validation exposed poor generalization to unseen failure event 4, highlighting the need for more independent failure events and further modeling work.
+
+The stratified baseline is useful as an optimistic feature-separability check, but the event-aware evaluation remains the realistic result for deployment.

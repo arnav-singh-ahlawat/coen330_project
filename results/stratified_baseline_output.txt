@@ -1,0 +1,33 @@
+Processed dataset: /home/niraj/Documents/MetroPT3_Project/data/processed/windowed_labeled_data.csv
+Processed dataset shape: (252720, 78)
+Feature count after dropping target/window_start: 76
+Split strategy: stratified random window-level train/test split
+Train shape: (202176, 76)
+Test shape: (50544, 76)
+Train class balance: class 0: 198016 (97.94%), class 1: 4160 (2.06%)
+Test class balance: class 0: 49504 (97.94%), class 1: 1040 (2.06%)
+window_start is used only by preprocessing and is not a model feature.
+Optimistic window-level comparison only: this stratified split mixes windows from the same failure events across train/test and can overestimate deployment performance.
+
+Training Logistic Regression baseline
+Logistic Regression baseline: accuracy=0.9636, precision=0.3573, recall=0.9615, f1=0.5210, f2=0.7185, roc_auc=0.9849
+Logistic Regression baseline confusion matrix [[tn, fp], [fn, tp]]: [[47705, 1799], [40, 1000]]
+
+Training Decision Tree
+Decision Tree: accuracy=0.9951, precision=0.8421, recall=0.9385, f1=0.8877, f2=0.9175, roc_auc=0.9687
+Decision Tree confusion matrix [[tn, fp], [fn, tp]]: [[49321, 183], [64, 976]]
+
+Training Random Forest
+Random Forest: accuracy=0.9963, precision=0.8638, recall=0.9760, f1=0.9165, f2=0.9513, roc_auc=0.9950
+Random Forest confusion matrix [[tn, fp], [fn, tp]]: [[49344, 160], [25, 1015]]
+
+Training Extra Trees
+Extra Trees: accuracy=0.9963, precision=0.8695, recall=0.9673, f1=0.9158, f2=0.9460, roc_auc=0.9926
+Extra Trees confusion matrix [[tn, fp], [fn, tp]]: [[49353, 151], [34, 1006]]
+
+Training HistGradientBoostingClassifier
+HistGradientBoostingClassifier: accuracy=0.9955, precision=0.8301, recall=0.9817, f1=0.8996, f2=0.9471, roc_auc=0.9986
+HistGradientBoostingClassifier confusion matrix [[tn, fp], [fn, tp]]: [[49295, 209], [19, 1021]]
+
+Saved stratified baseline metrics to /home/niraj/Documents/MetroPT3_Project/results/stratified_baseline_metrics.csv
+Saved stratified baseline confusion matrix plot to /home/niraj/Documents/MetroPT3_Project/results/plots/stratified_baseline_confusion_matrix.png

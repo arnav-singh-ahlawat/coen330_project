@@ -100,6 +100,8 @@ Verified split sizes:
 - Validation: 30,721 windows; class 0 = 27,798, class 1 = 2,923; failure event 3
 - Test: 77,587 windows; class 0 = 77,257, class 1 = 330; failure event 4
 
+A secondary stratified window-level baseline is also included as an optimistic comparison. It uses a stratified random train/test split over processed windows, not over independent failure events. This split is useful for checking whether the engineered features can separate labeled risk windows when event independence is not enforced, but it may overestimate performance because windows from the same failure events can appear in both train and test.
+
 ## 8. Metrics Explanation
 
 The selected metrics are recall, F2-score, F1-score, confusion matrix, precision, ROC-AUC when possible, and accuracy.
@@ -153,15 +155,38 @@ At the validation-selected threshold, the final model predicted 113 failure-risk
 
 The high test accuracy is misleading because the event-4 test block is dominated by normal windows. The recall, F2-score, F1-score, and confusion matrix show that the model failed to detect the held-out failure event despite high accuracy.
 
+Secondary stratified window-level baseline:
+
+- Script: `src/stratified_baseline.py`
+- Command: `python -m src.stratified_baseline`
+- Output metrics: `results/stratified_baseline_metrics.csv`
+- Output plot: `results/plots/stratified_baseline_confusion_matrix.png`
+- Split: 202,176 train windows and 50,544 test windows, stratified by `target`
+- Test class balance: 49,504 normal windows and 1,040 failure-risk windows
+
+Verified stratified baseline metrics:
+
+| Model | Accuracy | Precision | Recall | F1 | F2 | ROC-AUC |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Logistic Regression baseline | 0.9636 | 0.3573 | 0.9615 | 0.5210 | 0.7185 | 0.9849 |
+| Decision Tree | 0.9951 | 0.8421 | 0.9385 | 0.8877 | 0.9175 | 0.9687 |
+| Random Forest | 0.9963 | 0.8638 | 0.9760 | 0.9165 | 0.9513 | 0.9950 |
+| Extra Trees | 0.9963 | 0.8695 | 0.9673 | 0.9158 | 0.9460 | 0.9926 |
+| HistGradientBoostingClassifier | 0.9955 | 0.8301 | 0.9817 | 0.8996 | 0.9471 | 0.9986 |
+
+These stratified results are not deployment performance. They are much higher than the event-aware held-out event-4 result because the split treats 1-minute windows as independent examples. The dataset has only four independent failure events, and the 5,200 positive windows are not 5,200 independent failures. The comparison demonstrates why random or stratified window-level splits can be misleading for predictive maintenance.
+
 ## 10. Interpretation of Held-Out Event 4
 
 The event-aware held-out test result demonstrates poor generalization to an unseen failure event. The model performed much better on validation event 3, but it did not identify any positive windows in test event 4. This should be interpreted as a major limitation of supervised learning with only four independent failure events, not as a coding error.
 
 With only four documented failure events, the model has very limited examples of what failure-risk behavior can look like. Training on events 1 and 2 and validating on event 3 may not capture the sensor patterns present in event 4. The final test result therefore shows that the current model cannot be considered deployment-ready.
 
+The stratified window-level baseline should be discussed only as an optimistic feature-separability result. It shows that the engineered features can distinguish many labeled risk windows when similar event windows are allowed to appear in both train and test, but it does not answer the deployment question of whether the model can generalize to a future unseen failure event.
+
 ## 11. Limitations
 
-Current limitations include strong class imbalance, only four known independent failure events, and weak generalization to the held-out final failure event.
+Current limitations include strong class imbalance, only four known independent failure events, and weak generalization to the held-out final failure event. The 5,200 positive windows are repeated 1-minute windows around those four events, not independent compressor failures.
 
 The labeling strategy depends on known failure start and end times. If those times are incomplete or inaccurate, the supervised labels may be noisy. The one-hour lead window is a project-defined early-warning interval and should be described as an assumption.
 

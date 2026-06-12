@@ -277,6 +277,7 @@ Current run commands:
 python -m src.preprocessing
 python -m src.train
 python -m src.evaluate
+python -m src.stratified_baseline
 ```
 
 Rejected strict chronological 70/15/15 split:
@@ -367,6 +368,28 @@ Interpretation: threshold tuning improved validation F1 for the selected model, 
 
 Report interpretation: the event-aware held-out test result should be presented as a major limitation of supervised learning with only four independent failure events. The high accuracy is caused by the large number of normal windows and does not mean the model is successful. For the failure-risk class, the final test result has recall = 0.0, F2-score = 0.0, F1-score = 0.0, 330 false negatives, and 0 true positives. This is not a coding error to hide; it is the central evaluation finding and means the current model is not deployment-ready.
 
+Secondary stratified window-level baseline:
+
+- Script: `src/stratified_baseline.py`
+- Command: `python -m src.stratified_baseline`
+- Input: `data/processed/windowed_labeled_data.csv`
+- Split: stratified random train/test split over processed windows, test size = 20%, random state = 42
+- Train: 202,176 windows; class 0 = 198,016, class 1 = 4,160
+- Test: 50,544 windows; class 0 = 49,504, class 1 = 1,040
+- Features: 76 numeric engineered features after dropping `target` and `window_start`
+
+Stratified baseline metrics from `results/stratified_baseline_metrics.csv`:
+
+| Model | Accuracy | Precision | Recall | F1 | F2 | ROC-AUC | Confusion matrix `[tn, fp, fn, tp]` |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| Logistic Regression baseline | 0.9636 | 0.3573 | 0.9615 | 0.5210 | 0.7185 | 0.9849 | `[47705, 1799, 40, 1000]` |
+| Decision Tree | 0.9951 | 0.8421 | 0.9385 | 0.8877 | 0.9175 | 0.9687 | `[49321, 183, 64, 976]` |
+| Random Forest | 0.9963 | 0.8638 | 0.9760 | 0.9165 | 0.9513 | 0.9950 | `[49344, 160, 25, 1015]` |
+| Extra Trees | 0.9963 | 0.8695 | 0.9673 | 0.9158 | 0.9460 | 0.9926 | `[49353, 151, 34, 1006]` |
+| HistGradientBoostingClassifier | 0.9955 | 0.8301 | 0.9817 | 0.8996 | 0.9471 | 0.9986 | `[49295, 209, 19, 1021]` |
+
+Interpretation of the stratified baseline: this is an optimistic comparison only. The dataset has only four independent failure events, and the 5,200 positive windows are not 5,200 independent compressor failures. A stratified window-level split mixes windows from the same failure events across train and test, so it can show that engineered features separate labeled risk windows when event independence is not enforced, but it can also overestimate predictive-maintenance performance. The event-aware split remains the realistic deployment-oriented result because it tests whether training on failure events 1 and 2 and selecting on event 3 generalizes to held-out failure event 4.
+
 Saved outputs:
 
 - `results/metrics_table.csv`
@@ -378,6 +401,8 @@ Saved outputs:
 - `results/plots/validation_probability_distribution.png`
 - `results/plots/test_probability_distribution.png`
 - `results/plots/precision_recall_curve.png`
+- `results/stratified_baseline_metrics.csv`
+- `results/plots/stratified_baseline_confusion_matrix.png`
 
 ## 14. Report Notes
 
@@ -391,9 +416,11 @@ The final report should explain:
 - Why false negatives are more costly than false positives.
 - Why recall, F2-score, F1-score, and the confusion matrix are emphasized.
 - Why event-aware validation is more realistic than random row-level splitting.
+- Why stratified window-level evaluation can be misleading for predictive maintenance.
 - Why the confirmed 97.94% normal / 2.06% failure-risk class balance makes accuracy insufficient by itself.
 - Why only four independent failure events is a major dataset limitation.
 - Why the final event-aware test result demonstrates poor generalization to unseen failure event 4.
+- Why the stratified baseline is included only as an optimistic feature-separability comparison, not as deployment performance.
 
 Detailed report-ready notes are collected in `report/REPORT_NOTES.md`.
 
@@ -418,3 +445,4 @@ Detailed report-ready notes are collected in `report/REPORT_NOTES.md`.
 | 2026-06-12 | Codex | Verified preprocessing and labeling before threshold tuning. | Confirm labels, feature exclusions, and event-aware split correctness before changing decision thresholds. | `PROJECT_LOG.md`, `report/REPORT_NOTES.md` | Confirmed UCI failure times match configured failure windows with one-hour risk lead, recomputed labels from `window_start` with 0 mismatches, confirmed `window_start` and `target` are excluded from features, and confirmed split events are train 1-2, validation 3, test 4. | No model code or threshold tuning changed. |
 | 2026-06-12 | Codex | Added validation-only threshold tuning and probability diagnostics. | Improve modeling diagnostics fairly after preprocessing and labels were verified, without tuning on the held-out test event. | `src/config.py`, `src/modeling.py`, `src/train.py`, `src/evaluate.py`, `PROJECT_LOG.md`, `report/REPORT_NOTES.md` | `python -m compileall src`, `python -m src.train`, and `python -m src.evaluate` passed. Generated threshold table, probability plots, validation precision-recall curve, and thresholded test metrics. | Final selection used validation-tuned F1 only. Test event 4 still had 0 true positives, so the remaining issue is held-out event generalization. |
 | 2026-06-12 | Codex | Reframed documentation around failure-risk prediction for metro train compressor predictive maintenance. | Align README, project log, report notes, final report draft, and script descriptions with the current problem statement and verified event-aware result. | `README.md`, `PROJECT_LOG.md`, `report/REPORT_NOTES.md`, `report/final_report_draft.md`, `report/report_outline.md`, `src/config.py`, `src/train.py`, `src/evaluate.py`, `src/modeling.py`, `src/features.py`, `src/labeling.py`, `src/preprocessing.py`, `demo/README.md`, `demo/demo.py` | Documentation now emphasizes recall, F2-score, F1-score, confusion matrix, event-aware validation, and poor generalization to held-out event 4. | No labels, failure windows, test split, model selection results, or test metrics were changed. |
+| 2026-06-12 | Codex | Added a secondary stratified window-level baseline experiment. | Show how much performance can improve when engineered windows are split randomly without enforcing failure-event independence. | `src/stratified_baseline.py`, `PROJECT_LOG.md`, `report/REPORT_NOTES.md`, `report/final_report_draft.md` | `python -m compileall src` and `python -m src.stratified_baseline` passed. Generated `results/stratified_baseline_metrics.csv` and `results/plots/stratified_baseline_confusion_matrix.png`. | Event-aware evaluation remains the realistic result; the stratified baseline is optimistic and not deployment performance. |
