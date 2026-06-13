@@ -1,0 +1,31 @@
+Processed dataset: /home/niraj/Documents/MetroPT3_Project/data/processed/windowed_labeled_data.csv
+Processed dataset shape: (252720, 78)
+Train shape: (144412, 78)
+Validation shape: (30721, 78)
+Test shape: (77587, 78)
+Split strategy: event-aware blocked split
+Train failure events: [1, 2]
+Validation failure events: [3]
+Test failure events: [4]
+Event 1: event=2020-04-17 23:00:00 to 2020-04-18 23:59:00, assigned block=2020-02-01 00:00:00 to 2020-05-09 11:14:30
+Event 2: event=2020-05-29 22:30:00 to 2020-05-30 06:00:00, assigned block=2020-05-09 11:14:30 to 2020-06-02 07:30:00
+Event 3: event=2020-06-05 09:00:00 to 2020-06-07 14:30:00, assigned block=2020-06-02 07:30:00 to 2020-06-26 14:00:00
+Event 4: event=2020-07-15 13:30:00 to 2020-07-15 19:00:00, assigned block=2020-06-26 14:00:00 to 2020-09-01 03:59:00.000000001
+Test class balance: class 0: 77257 (99.57%), class 1: 330 (0.43%)
+window_start is used only for sorting/splitting and is not a model feature.
+              precision    recall  f1-score   support
+
+      normal       1.00      1.00      1.00     77257
+failure_risk       0.00      0.00      0.00       330
+
+    accuracy                           0.99     77587
+   macro avg       0.50      0.50      0.50     77587
+weighted avg       0.99      0.99      0.99     77587
+
+Final test metrics:
+                       model            selection_strategy  threshold  accuracy  precision  recall  f1  f2    tn  fp  fn  tp  predicted_normal_count  predicted_failure_count  roc_auc  test_probability_min  test_probability_mean  test_probability_max
+Logistic Regression baseline validation_f1_threshold_tuned       0.61   0.99429        0.0     0.0 0.0 0.0 77144 113 330   0                   77474                      113 0.120876          1.081466e-22               0.024688              0.999985
+Final threshold selected on validation: 0.61; predicted_normal=77474, predicted_failure=113
+Test probability min/mean/max: 0.000000/0.024688/0.999985
+Saved final test metrics to /home/niraj/Documents/MetroPT3_Project/results/test_metrics.csv
+Saved plot to /home/niraj/Documents/MetroPT3_Project/results/plots/confusion_matrix.png

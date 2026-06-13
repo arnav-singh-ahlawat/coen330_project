@@ -1,0 +1,2 @@
+model,selection_strategy,threshold,accuracy,precision,recall,f1,f2,tn,fp,fn,tp,predicted_normal_count,predicted_failure_count,roc_auc,test_probability_min,test_probability_mean,test_probability_max
+Logistic Regression baseline,validation_f1_threshold_tuned,0.61,0.9942902805882429,0.0,0.0,0.0,0.0,77144,113,330,0,77474,113,0.12087550368094527,1.081465713493275e-22,0.02468801210091668,0.9999849742978882
