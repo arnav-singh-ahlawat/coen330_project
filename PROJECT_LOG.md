@@ -258,6 +258,42 @@ Confirmed split assignment:
 
 Model metrics: Generated from `python -m src.train`.
 
+### Demo Repair
+
+Demo error:
+
+```bash
+python demo/demo.py
+python -m demo.demo
+```
+
+Both demo entrypoints failed with:
+
+```text
+ValueError: The feature names should match those that were passed during fit.
+```
+
+Cause: `demo/demo.py` rebuilt raw-style feature columns such as `caudal_impulses`,
+`comp`, `dayofweek`, `dv_eletric`, and `dv_pressure`. The final model was trained on
+the processed 1-minute window feature table, where the model features exclude
+`window_start` and `target` and include engineered columns such as
+`caudal_impulses_mean`, `caudal_impulses_std`, `caudal_impulses_min`,
+`caudal_impulses_max`, and `caudal_impulses_last`.
+
+Fix: updated `demo/demo.py` so it loads `data/processed/windowed_labeled_data.csv`,
+loads `models/final_model.joblib`, derives features with the same training helper that
+drops `window_start` and `target`, selects a normal sample and a failure-risk sample
+when available, uses `predict_proba`, and applies the saved final threshold from
+`results/threshold_table.csv`. If the threshold table is missing, the demo warns and
+defaults to threshold `0.50`.
+
+Verification commands passed:
+
+```bash
+python demo/demo.py
+python -m demo.demo
+```
+
 Plots: Generated from `python -m src.train` and `python -m src.evaluate`.
 
 Processed windowed labeled dataset: Confirmed. Local rerun created `data/processed/windowed_labeled_data.csv` with 252,720 rows and 78 columns.
@@ -484,3 +520,4 @@ Detailed report-ready notes are collected in `report/REPORT_NOTES.md`.
 | 2026-06-12 | Niraj | Reframed documentation around failure-risk prediction for metro train compressor predictive maintenance. | Align README, project log, report notes, final report draft, and script descriptions with the current problem statement and verified event-aware result. | `README.md`, `PROJECT_LOG.md`, `report/REPORT_NOTES.md`, `report/final_report_draft.md`, `report/report_outline.md`, `src/config.py`, `src/train.py`, `src/evaluate.py`, `src/modeling.py`, `src/features.py`, `src/labeling.py`, `src/preprocessing.py`, `demo/README.md`, `demo/demo.py` | Documentation now emphasizes recall, F2-score, F1-score, confusion matrix, event-aware validation, and poor generalization to held-out event 4. | No labels, failure windows, test split, model selection results, or test metrics were changed. |
 | 2026-06-12 | Niraj | Added a secondary stratified window-level baseline experiment. | Show how much performance can improve when engineered windows are split randomly without enforcing failure-event independence. | `src/stratified_baseline.py`, `PROJECT_LOG.md`, `report/REPORT_NOTES.md`, `report/final_report_draft.md` | `python -m compileall src` and `python -m src.stratified_baseline` passed. Generated `results/stratified_baseline_metrics.csv` and `results/plots/stratified_baseline_confusion_matrix.png`. | Event-aware evaluation remains the realistic result; the stratified baseline is optimistic and not deployment performance. |
 | 2026-06-13 | Niraj | Added EDA script, plots, and summary tables. | Provide report-ready exploratory evidence for class imbalance, event-level positives, metric choice, and event-aware splitting. | `src/eda.py`, `results/eda_summary.csv`, `results/event_summary.csv`, `results/plots/class_balance.png`, `results/plots/split_class_balance.png`, `results/plots/sensor_correlation_heatmap.png`, `results/plots/failure_windows_timeline.png`, `results/plots/key_sensor_distributions.png`, `PROJECT_LOG.md`, `report/REPORT_NOTES.md`, `report/final_report_draft.md` | `python -m compileall src` and `python -m src.eda` passed. Confirmed 252,720 rows, 76 model features, 5,200 positive windows, and 4 independent failure events. | Training and evaluation were not changed. Raw and processed CSV files remain ignored and should not be committed. |
+| 2026-06-13 | Niraj | Fixed the command-line demo feature mismatch. | The demo passed raw-style sensor columns to a model trained on processed 1-minute engineered window features. | `demo/demo.py`, `demo/README.md`, `README.md`, `PROJECT_LOG.md`, `report/REPORT_NOTES.md` | Passed: `python demo/demo.py` and `python -m demo.demo`. | Training, evaluation, labels, failure windows, split, and generated CSV files were not changed. |

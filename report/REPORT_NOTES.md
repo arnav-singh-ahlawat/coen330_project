@@ -163,6 +163,24 @@ The class-balance plots support emphasizing recall, F2-score, F1-score, and the 
 
 The timeline plot shows that failure-risk windows occur in four separated event clusters over time. That visual evidence supports the event-aware split decision: train on events 1 and 2, tune on event 3, and test on event 4, instead of mixing windows from the same failure events across splits.
 
+## 8.2 Demo Explanation
+
+The command-line demo is `demo/demo.py` and should be run from the repository root:
+
+```bash
+python demo/demo.py
+```
+
+The demo loads `data/processed/windowed_labeled_data.csv`, drops `window_start` and
+`target`, and keeps the engineered 1-minute window feature columns used by the training
+pipeline. It then loads `models/final_model.joblib`, reads the selected final threshold
+from `results/threshold_table.csv`, and prints representative predictions for a normal
+window and a failure-risk window when both are available.
+
+This demo is for illustrating pipeline usage on processed 1-minute windows. It should
+not be presented as deployment-ready, because event-aware testing showed poor
+generalization to held-out failure event 4.
+
 ## 9. Results Summary
 
 Verified validation threshold comparison:

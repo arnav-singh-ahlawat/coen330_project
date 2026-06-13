@@ -71,6 +71,11 @@ Run the demo:
 python demo/demo.py
 ```
 
+The demo loads `data/processed/windowed_labeled_data.csv`, applies
+`models/final_model.joblib`, and uses the selected threshold from
+`results/threshold_table.csv`. It is intended to illustrate pipeline usage on processed
+1-minute windows, not deployment-ready performance.
+
 ## Labeling Note
 
 This is a supervised classification project, so training requires binary labels. The current pipeline uses timestamp-based failure-risk windows configured in `src/config.py`.

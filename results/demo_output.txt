@@ -1,0 +1,22 @@
+MetroPT-3 failure-risk demo
+Processed data: /home/niraj/Documents/MetroPT3_Project/data/processed/windowed_labeled_data.csv
+Saved model: /home/niraj/Documents/MetroPT3_Project/models/final_model.joblib
+Feature columns used: 76
+Threshold used: 0.61
+Threshold source: /home/niraj/Documents/MetroPT3_Project/results/threshold_table.csv (best_f1_threshold)
+
+sample type: normal
+window_start: 2020-02-01 00:00:00
+predicted probability of failure-risk: 0.016487
+threshold used: 0.61
+predicted class: normal (0)
+true class: normal (0)
+
+sample type: failure-risk
+window_start: 2020-04-17 23:00:00
+predicted probability of failure-risk: 0.641494
+threshold used: 0.61
+predicted class: failure-risk (1)
+true class: failure-risk (1)
+
+Note: This demo illustrates the pipeline usage on processed 1-minute windows. The current model is not deployment-ready because event-aware testing showed poor generalization to held-out failure event 4.
