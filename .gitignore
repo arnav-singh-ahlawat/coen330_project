@@ -27,3 +27,13 @@ models/*.joblib
 # OS files
 .DS_Store
 Thumbs.db
+
+# Allow the specific LFS-tracked files needed for team reproducibility
+!data/raw/
+!data/raw/MetroPT3(AirCompressor).csv
+
+!data/processed/
+!data/processed/windowed_labeled_data.csv
+
+!models/
+!models/final_model.joblib

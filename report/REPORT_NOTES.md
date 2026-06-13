@@ -300,7 +300,7 @@ Audit summary:
 
 - Core ML workflow is mostly in place: dataset instructions, preprocessing, EDA, five models, validation-only tuning, event-aware evaluation, stratified optimistic baseline, results tables, plots, and demo.
 - Final report draft now follows the 15 required sections and includes placeholders for five team members, references, source/tool acknowledgments, feature interpretation limitations, outlier/missing-value discussion, and qualitative error analysis.
-- Final submission work remains incomplete: final report PDF is still missing, team member placeholders must be replaced with final names/contributions, and the Moodle ZIP package has not been prepared.
+- Final submission work remains incomplete only for manual packaging items: team member placeholders must be replaced with final names/contributions if names are available, and the Moodle ZIP package has not been prepared.
 - Optional remaining audit items include PR-AUC for imbalanced classification and richer per-window qualitative examples if generated without changing the current methodology.
 
 No training, evaluation, labels, failure windows, split logic, raw/processed CSV files, or model artifacts were changed while creating the checklist and audit.
@@ -347,11 +347,31 @@ deployment-ready performance.
 
 Remaining issues before final submission:
 
-- Generate `report/final_report.pdf`.
-- Replace team contribution placeholders with final names and verified contributions.
+- Replace team contribution placeholders with final names and verified contributions if exact names are available.
 - Prepare the Moodle ZIP package without raw data, processed CSV files, virtual
   environments, or large model files.
 - Optionally add PR-AUC, quantified outlier counts, or per-window qualitative examples
   only if those additions are intentionally regenerated from the current data without
   changing labels, failure windows, event-aware split, model selection, thresholds, or
   existing reported metrics.
+
+## 16. Final Report and PDF Preparation
+
+Final submission materials created on 2026-06-13:
+
+- `report/final_report.md` was created from `report/final_report_draft.md` and polished into the 15 required report sections.
+- The final report keeps the verified event-aware result visible: the selected Logistic Regression baseline with threshold 0.61 failed to generalize to held-out event 4, with TP = 0, FN = 330, recall = 0.0, F1 = 0.0, F2 = 0.0, and ROC-AUC = 0.12087550368094527.
+- The final report keeps the stratified window-level baseline framed as optimistic only.
+- `report/final_report.pdf` was generated locally. `pandoc`, `wkhtmltopdf`, `weasyprint`, browser CLIs, and `md-to-pdf` were not available, so a temporary HTML rendering of the Markdown was converted to PDF using LibreOffice headless mode.
+- PDF verification: `pdfinfo report/final_report.pdf` reports 22 pages and `pdfimages -list report/final_report.pdf` confirms embedded figures.
+- `docs/final_submission_checklist.md` was created with ready items, missing/manual items, final ZIP include items, and final ZIP exclude items.
+- Team contribution names remain `TODO_NAME` placeholders in `report/final_report.md`; no names were invented.
+
+Documentation-only changes in this finalization:
+
+- Created `report/final_report.md`.
+- Generated `report/final_report.pdf`.
+- Created `docs/final_submission_checklist.md`.
+- Updated `PROJECT_LOG.md`, `report/REPORT_NOTES.md`, and `docs/comprehensive_project_review.md`.
+
+No training code, evaluation code, labels, failure windows, event-aware split logic, model selection logic, thresholds, reported metrics, or generated result CSV values were changed.

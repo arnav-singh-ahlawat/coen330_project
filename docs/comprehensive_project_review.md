@@ -137,6 +137,8 @@ Core files:
 | `PROJECT_LOG.md` | Exists | 36,769 bytes |
 | `report/REPORT_NOTES.md` | Exists | 25,024 bytes |
 | `report/final_report_draft.md` | Exists | 22,481 bytes |
+| `report/final_report.md` | Exists | 25,397 bytes |
+| `report/final_report.pdf` | Exists | 1,079,213 bytes |
 | `data/data_link.txt` | Exists | 462 bytes |
 
 Scripts:
@@ -190,7 +192,7 @@ Additional guideline-required item:
 
 | Path | Status | Evidence |
 | --- | --- | --- |
-| `report/final_report.pdf` | Missing | `stat` failed with `No such file or directory` |
+| `report/final_report.pdf` | Exists | Generated locally from `report/final_report.md`; `pdfinfo` reports 22 pages and `pdfimages -list` confirms embedded report figures |
 
 ## Step 4 - Methodology Verification
 
@@ -334,17 +336,15 @@ Why the stratified baseline is not the main deployment result:
 | Limitations | Complete | `report/final_report_draft.md`, `report/REPORT_NOTES.md`, `README.md` |
 | Reproducibility | Complete | Full run passed; `README.md`, `requirements.txt`, scripts, outputs, and `results/full_reproducibility_run.txt` exist |
 | Demo | Complete | `demo/demo.py` passed and states non-deployment-ready status |
-| Final report structure | Partial | `report/final_report_draft.md` has the 15 required sections, but `report/final_report.pdf` is missing |
-| Team contribution section | Partial | Present as placeholders in `report/final_report_draft.md`; real names/contributions still needed |
-| References | Complete | `report/final_report_draft.md` cites MetroPT-3/UCI, Python libraries, course guideline, and tools |
-| Academic integrity / external tools acknowledgment | Complete | `report/final_report_draft.md` acknowledges external libraries and AI-assisted tools |
+| Final report structure | Complete | `report/final_report.md` has the 15 required sections and `report/final_report.pdf` was generated |
+| Team contribution section | Partial | Present with `TODO_NAME` placeholders in `report/final_report.md`; real names/contributions still needed |
+| References | Complete | `report/final_report.md` cites MetroPT-3/UCI, Python libraries, course guideline, and tools |
+| Academic integrity / external tools acknowledgment | Complete | `report/final_report.md` acknowledges external libraries and AI-assisted tools |
 
 ## Step 7 - Remaining Work
 
-Priority 1 - must fix before report/PDF or final submission:
+Priority 1 - must fix before final Moodle submission:
 
-- Generate `report/final_report.pdf` from the draft and verify it uses only actual
-  results.
 - Replace all team contribution placeholders with final names and verified individual
   contributions.
 - Keep the event-aware event-4 failure explicit in the final PDF: recall, F1, and F2
@@ -395,5 +395,17 @@ The project is reproducible in the current local environment and has the require
 scripts, generated result files, plots, model artifact, processed local data, and demo.
 The realistic event-aware evaluation remains the main finding and is negative for
 held-out event 4. The largest remaining submission blockers are not code execution
-problems; they are report/package completion problems: missing final PDF, placeholder
-team contributions, and final ZIP preparation.
+problems; they are package-completion problems: placeholder team contributions and
+final ZIP preparation.
+
+## Final Submission Material Addendum
+
+Additional documentation-only finalization was completed on 2026-06-13:
+
+- Created `report/final_report.md` from the draft, preserving the verified metrics and the held-out event-4 failure.
+- Generated `report/final_report.pdf` locally. The final PDF was produced from a temporary HTML rendering of the Markdown using LibreOffice headless conversion because `pandoc`, `wkhtmltopdf`, `weasyprint`, browser CLIs, and `md-to-pdf` were not available.
+- Verified the PDF with `pdfinfo`; it is 22 pages and 1,079,213 bytes.
+- Verified embedded figures with `pdfimages -list`.
+- Created `docs/final_submission_checklist.md`.
+- Team contribution names are still placeholders in the final report and must be replaced if exact names become available.
+- No training code, evaluation code, labels, failure windows, event-aware split logic, model selection logic, thresholds, reported metrics, or generated result CSV values were changed.
