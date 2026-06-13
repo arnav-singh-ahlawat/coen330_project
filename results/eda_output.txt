@@ -1,0 +1,11 @@
+Processed dataset: /home/niraj/Documents/MetroPT3_Project/data/processed/windowed_labeled_data.csv
+Processed dataset shape: (252720, 78)
+Selected correlation features: dv_pressure_min, dv_pressure_mean, dv_pressure_last, dv_pressure_max, dv_eletric_min, comp_max, h1_max, mpg_max, dv_eletric_mean, comp_mean, h1_mean, mpg_mean
+Selected distribution features: dv_pressure_mean, dv_eletric_mean, comp_mean, h1_mean, mpg_mean, dv_pressure_min
+Saved plot to /home/niraj/Documents/MetroPT3_Project/results/plots/class_balance.png
+Saved plot to /home/niraj/Documents/MetroPT3_Project/results/plots/split_class_balance.png
+Saved plot to /home/niraj/Documents/MetroPT3_Project/results/plots/sensor_correlation_heatmap.png
+Saved plot to /home/niraj/Documents/MetroPT3_Project/results/plots/failure_windows_timeline.png
+Saved plot to /home/niraj/Documents/MetroPT3_Project/results/plots/key_sensor_distributions.png
+Saved EDA summary to /home/niraj/Documents/MetroPT3_Project/results/eda_summary.csv
+Saved event summary to /home/niraj/Documents/MetroPT3_Project/results/event_summary.csv

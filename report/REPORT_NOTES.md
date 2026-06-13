@@ -121,6 +121,48 @@ Recall is emphasized because it measures how many true failure-risk windows the 
 
 Threshold tuning is performed using validation data only. For each model, class-1 probabilities are evaluated across thresholds from 0.01 to 0.99. The workflow records the threshold that maximizes validation F1-score and the threshold that maximizes validation F2-score. The held-out test event is not used for threshold selection.
 
+## 8.1 Exploratory Data Analysis Notes
+
+The exploratory data analysis script is `src/eda.py`. It reads `data/processed/windowed_labeled_data.csv` and writes report-ready outputs without changing training or evaluation.
+
+Generated EDA outputs:
+
+- `results/plots/class_balance.png`
+- `results/plots/split_class_balance.png`
+- `results/plots/sensor_correlation_heatmap.png`
+- `results/plots/failure_windows_timeline.png`
+- `results/plots/key_sensor_distributions.png`
+- `results/eda_summary.csv`
+- `results/event_summary.csv`
+
+Confirmed EDA summary from `results/eda_summary.csv`:
+
+- Dataset shape: 252,720 rows and 78 columns
+- Number of model features after excluding `target` and `window_start`: 76
+- Date range: February 1, 2020 00:00:00 to September 1, 2020 03:59:00
+- Class 0 normal: 247,520 windows, 97.942387%
+- Class 1 failure-risk: 5,200 windows, 2.057613%
+- Missing values: 1,470 total missing cells across 15 standard-deviation feature columns
+
+Confirmed event summary from `results/event_summary.csv`:
+
+| Event | Split | Risk start | Failure start | Failure end | Positive windows |
+| --- | --- | --- | --- | --- | ---: |
+| 1 | Train | 2020-04-17 23:00:00 | 2020-04-18 00:00:00 | 2020-04-18 23:59:00 | 1,496 |
+| 2 | Train | 2020-05-29 22:30:00 | 2020-05-29 23:30:00 | 2020-05-30 06:00:00 | 451 |
+| 3 | Validation | 2020-06-05 09:00:00 | 2020-06-05 10:00:00 | 2020-06-07 14:30:00 | 2,923 |
+| 4 | Test | 2020-07-15 13:30:00 | 2020-07-15 14:30:00 | 2020-07-15 19:00:00 | 330 |
+
+Report-ready interpretation:
+
+The EDA confirms that the processed dataset is highly imbalanced. Only 5,200 of 252,720 windows are labeled failure-risk, or about 2.06% of the dataset. This makes accuracy misleading because a model can classify most windows as normal and still achieve a high accuracy score while missing the class that matters most.
+
+The positive class also represents only 4 independent failure events, not 5,200 independent failures. The 5,200 positives are repeated 1-minute windows around those four events. This distinction is important for the report because it explains why random or stratified window-level splits can overstate performance.
+
+The class-balance plots support emphasizing recall, F2-score, F1-score, and the confusion matrix. Recall shows whether true failure-risk windows are caught. F2-score gives extra weight to recall, which matches the maintenance cost of false negatives. F1-score summarizes the precision/recall tradeoff. The confusion matrix reports the actual false negatives and true positives that accuracy hides.
+
+The timeline plot shows that failure-risk windows occur in four separated event clusters over time. That visual evidence supports the event-aware split decision: train on events 1 and 2, tune on event 3, and test on event 4, instead of mixing windows from the same failure events across splits.
+
 ## 9. Results Summary
 
 Verified validation threshold comparison:

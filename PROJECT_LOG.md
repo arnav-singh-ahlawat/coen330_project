@@ -278,6 +278,7 @@ python -m src.preprocessing
 python -m src.train
 python -m src.evaluate
 python -m src.stratified_baseline
+python -m src.eda
 ```
 
 Rejected strict chronological 70/15/15 split:
@@ -404,6 +405,42 @@ Saved outputs:
 - `results/stratified_baseline_metrics.csv`
 - `results/plots/stratified_baseline_confusion_matrix.png`
 
+EDA outputs generated from `python -m src.eda`:
+
+- `results/eda_summary.csv`
+- `results/event_summary.csv`
+- `results/plots/class_balance.png`
+- `results/plots/split_class_balance.png`
+- `results/plots/sensor_correlation_heatmap.png`
+- `results/plots/failure_windows_timeline.png`
+- `results/plots/key_sensor_distributions.png`
+
+Confirmed EDA summary:
+
+- Dataset shape: 252,720 rows and 78 columns
+- Model feature count after dropping `target` and `window_start`: 76
+- Date range: 2020-02-01 00:00:00 to 2020-09-01 03:59:00
+- Class 0 normal: 247,520 windows, 97.942387%
+- Class 1 failure-risk: 5,200 windows, 2.057613%
+- Missing values: 1,470 total missing cells across 15 columns; the missing columns are the sensor standard-deviation features with 98 missing values each.
+
+Confirmed event summary:
+
+| Event | Split | Risk start | Failure start | Failure end | Positive windows |
+| --- | --- | --- | --- | --- | ---: |
+| 1 | Train | 2020-04-17 23:00:00 | 2020-04-18 00:00:00 | 2020-04-18 23:59:00 | 1,496 |
+| 2 | Train | 2020-05-29 22:30:00 | 2020-05-29 23:30:00 | 2020-05-30 06:00:00 | 451 |
+| 3 | Validation | 2020-06-05 09:00:00 | 2020-06-05 10:00:00 | 2020-06-07 14:30:00 | 2,923 |
+| 4 | Test | 2020-07-15 13:30:00 | 2020-07-15 14:30:00 | 2020-07-15 19:00:00 | 330 |
+
+EDA interpretation for the report:
+
+- The processed dataset is highly imbalanced: 97.94% normal windows and 2.06% failure-risk windows.
+- The positive class contains 5,200 labeled failure-risk windows, but those windows come from only 4 independent failure events.
+- The class-balance and split-balance plots confirm why accuracy is misleading: a model can classify most windows as normal and still appear accurate while missing the rare class.
+- The EDA supports reporting recall, F2-score, F1-score, and the confusion matrix as primary evidence because these metrics show missed failure-risk windows directly.
+- The timeline plot shows that positive windows occur in four separated event clusters, supporting the event-aware split decision instead of a random window-level split.
+
 ## 14. Report Notes
 
 The final report should explain:
@@ -446,3 +483,4 @@ Detailed report-ready notes are collected in `report/REPORT_NOTES.md`.
 | 2026-06-12 | Niraj | Added validation-only threshold tuning and probability diagnostics. | Improve modeling diagnostics fairly after preprocessing and labels were verified, without tuning on the held-out test event. | `src/config.py`, `src/modeling.py`, `src/train.py`, `src/evaluate.py`, `PROJECT_LOG.md`, `report/REPORT_NOTES.md` | `python -m compileall src`, `python -m src.train`, and `python -m src.evaluate` passed. Generated threshold table, probability plots, validation precision-recall curve, and thresholded test metrics. | Final selection used validation-tuned F1 only. Test event 4 still had 0 true positives, so the remaining issue is held-out event generalization. |
 | 2026-06-12 | Niraj | Reframed documentation around failure-risk prediction for metro train compressor predictive maintenance. | Align README, project log, report notes, final report draft, and script descriptions with the current problem statement and verified event-aware result. | `README.md`, `PROJECT_LOG.md`, `report/REPORT_NOTES.md`, `report/final_report_draft.md`, `report/report_outline.md`, `src/config.py`, `src/train.py`, `src/evaluate.py`, `src/modeling.py`, `src/features.py`, `src/labeling.py`, `src/preprocessing.py`, `demo/README.md`, `demo/demo.py` | Documentation now emphasizes recall, F2-score, F1-score, confusion matrix, event-aware validation, and poor generalization to held-out event 4. | No labels, failure windows, test split, model selection results, or test metrics were changed. |
 | 2026-06-12 | Niraj | Added a secondary stratified window-level baseline experiment. | Show how much performance can improve when engineered windows are split randomly without enforcing failure-event independence. | `src/stratified_baseline.py`, `PROJECT_LOG.md`, `report/REPORT_NOTES.md`, `report/final_report_draft.md` | `python -m compileall src` and `python -m src.stratified_baseline` passed. Generated `results/stratified_baseline_metrics.csv` and `results/plots/stratified_baseline_confusion_matrix.png`. | Event-aware evaluation remains the realistic result; the stratified baseline is optimistic and not deployment performance. |
+| 2026-06-13 | Niraj | Added EDA script, plots, and summary tables. | Provide report-ready exploratory evidence for class imbalance, event-level positives, metric choice, and event-aware splitting. | `src/eda.py`, `results/eda_summary.csv`, `results/event_summary.csv`, `results/plots/class_balance.png`, `results/plots/split_class_balance.png`, `results/plots/sensor_correlation_heatmap.png`, `results/plots/failure_windows_timeline.png`, `results/plots/key_sensor_distributions.png`, `PROJECT_LOG.md`, `report/REPORT_NOTES.md`, `report/final_report_draft.md` | `python -m compileall src` and `python -m src.eda` passed. Confirmed 252,720 rows, 76 model features, 5,200 positive windows, and 4 independent failure events. | Training and evaluation were not changed. Raw and processed CSV files remain ignored and should not be committed. |

@@ -1,0 +1,28 @@
+section,metric,value
+dataset,row_count,252720
+dataset,column_count,78
+dataset,dataset_shape,252720 rows x 78 columns
+features,feature_count_excluding_target_and_window_start,76
+date_range,start,2020-02-01 00:00:00
+date_range,end,2020-09-01 03:59:00
+class_counts,normal_count,247520
+class_percentages,normal_percentage,97.942387
+class_counts,failure-risk_count,5200
+class_percentages,failure-risk_percentage,2.057613
+missing_values,total_missing_cells,1470
+missing_values,columns_with_missing_values,15
+missing_values_by_column,tp2_std,98
+missing_values_by_column,tp3_std,98
+missing_values_by_column,h1_std,98
+missing_values_by_column,dv_pressure_std,98
+missing_values_by_column,reservoirs_std,98
+missing_values_by_column,oil_temperature_std,98
+missing_values_by_column,motor_current_std,98
+missing_values_by_column,comp_std,98
+missing_values_by_column,dv_eletric_std,98
+missing_values_by_column,towers_std,98
+missing_values_by_column,mpg_std,98
+missing_values_by_column,lps_std,98
+missing_values_by_column,pressure_switch_std,98
+missing_values_by_column,oil_level_std,98
+missing_values_by_column,caudal_impulses_std,98

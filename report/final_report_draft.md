@@ -52,6 +52,18 @@ The confirmed processed dataset has 252,720 one-minute windows and 78 columns. M
 
 The model comparison includes Logistic Regression, Decision Tree, Random Forest, Extra Trees, and HistGradientBoostingClassifier. Logistic Regression is used as the baseline. Class weighting is used where supported because the positive failure-risk class is rare.
 
+## 4.1 Exploratory Data Analysis
+
+Exploratory data analysis was generated with `src/eda.py` using `data/processed/windowed_labeled_data.csv`. The script created class-balance, split-balance, sensor-correlation, timeline, and class-wise sensor-distribution plots, along with `results/eda_summary.csv` and `results/event_summary.csv`.
+
+The EDA confirms that the dataset is highly imbalanced. The processed data contains 247,520 normal windows and 5,200 failure-risk windows, so only 2.06% of windows are positive. This imbalance explains why accuracy is misleading: a model can predict most windows as normal and still appear accurate while failing to detect the rare failure-risk class.
+
+The event summary also shows that the 5,200 positive windows come from only four independent failure events. These are not 5,200 independent failures; they are repeated 1-minute windows around four documented compressor failure periods. This supports the decision to evaluate by event rather than by a random window-level split.
+
+The EDA supports using recall, F2-score, F1-score, and the confusion matrix as primary evaluation evidence. Recall measures how many true failure-risk windows are caught, F2-score weights recall more heavily, F1-score summarizes the precision/recall tradeoff, and the confusion matrix shows the actual false negatives and true positives that accuracy can hide.
+
+The timeline plot shows the four separated clusters of failure-risk windows over time. This visual pattern supports the event-aware split: events 1 and 2 are used for training, event 3 for validation, and event 4 for testing.
+
 ## 5. Validation Strategy
 
 The final evaluation uses an event-aware blocked split:
