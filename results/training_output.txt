@@ -88,11 +88,11 @@ Best tuned-threshold validation F1: Logistic Regression baseline (threshold=0.61
 Best tuned-threshold validation F2: Logistic Regression baseline (threshold=0.61, f2=0.8945)
 
 Selected final model: Logistic Regression baseline using validation_f1_threshold_tuned at threshold 0.61
-Final held-out test metrics:
+Final held-out event-4 test metrics; accuracy is secondary:
                        model            selection_strategy  threshold  accuracy  precision  recall  f1  f2    tn  fp  fn  tp  predicted_normal_count  predicted_failure_count  roc_auc  test_probability_min  test_probability_mean  test_probability_max
 Logistic Regression baseline validation_f1_threshold_tuned       0.61   0.99429        0.0     0.0 0.0 0.0 77144 113 330   0                   77474                      113 0.120876          1.081466e-22               0.024688              0.999985
 Final test probability min/mean/max: 0.000000/0.024688/0.999985
-Final test confusion matrix [[tn, fp], [fn, tp]]:
+Final event-4 test confusion matrix [[tn, fp], [fn, tp]]:
   [[77144, 113], [330, 0]]
 Saved validation metrics table to /home/niraj/Documents/MetroPT3_Project/results/metrics_table.csv
 Saved threshold table to /home/niraj/Documents/MetroPT3_Project/results/threshold_table.csv
@@ -102,4 +102,3 @@ Saved final test confusion matrix plot to /home/niraj/Documents/MetroPT3_Project
 Saved validation probability plot to /home/niraj/Documents/MetroPT3_Project/results/plots/validation_probability_distribution.png
 Saved test probability plot to /home/niraj/Documents/MetroPT3_Project/results/plots/test_probability_distribution.png
 Saved validation precision-recall curve to /home/niraj/Documents/MetroPT3_Project/results/plots/precision_recall_curve.png
-Saved training output to /home/niraj/Documents/MetroPT3_Project/results/training_output.txt

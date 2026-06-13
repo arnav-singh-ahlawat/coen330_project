@@ -260,6 +260,47 @@ Any future model improvement should continue to report recall, F2-score, F1-scor
 
 ## 13. Team Contributions
 
-Team contributions are Pending.
+The final report draft now includes contribution placeholders for all five team members. Replace the placeholders with final names and verified individual contributions before submission.
 
-This section should be updated with each team member's specific work on data preparation, feature engineering, modeling, evaluation, GitHub/repository management, demo preparation, and report writing.
+Current placeholder coverage:
+
+| Team member | Contribution placeholder |
+| --- | --- |
+| Member 1: [Name] | Dataset access and preparation; verified raw-data placement instructions and preprocessing outputs. |
+| Member 2: [Name] | Feature engineering and EDA; reviewed 1-minute window features, class balance, missing values, and plots. |
+| Member 3: [Name] | Model training and tuning; ran or reviewed Logistic Regression, Decision Tree, Random Forest, Extra Trees, and HistGradientBoostingClassifier experiments. |
+| Member 4: [Name] | Evaluation and error analysis; reviewed event-aware split, validation-only threshold selection, final test metrics, and stratified baseline framing. |
+| Member 5: [Name] | Demo, repository organization, and report writing; reviewed README, demo usage, final report structure, references, and acknowledgments. |
+
+## 13.1 Feature Interpretation, Error Analysis, And Acknowledgments Added To Draft
+
+The final report draft has been reorganized into the 15 required sections from the guideline checklist. The draft now includes a feature interpretation discussion based only on existing EDA outputs. The EDA-selected target-correlated engineered features are `dv_pressure_min`, `dv_pressure_mean`, `dv_pressure_last`, `dv_pressure_max`, `dv_eletric_min`, `comp_max`, `h1_max`, `mpg_max`, `dv_eletric_mean`, `comp_mean`, `h1_mean`, and `mpg_mean`. The distribution plot focuses on `dv_pressure_mean`, `dv_eletric_mean`, `comp_mean`, `h1_mean`, `mpg_mean`, and `dv_pressure_min`.
+
+No reliable final feature-importance table was exported for the selected Logistic Regression model, and no saved tree-importance table is available in the current results. The report therefore does not claim a verified coefficient or feature-importance ranking. It treats the feature discussion as descriptive EDA evidence only.
+
+The final report draft now explicitly discusses:
+
+- False negatives on held-out event 4: all 330 true failure-risk windows were predicted normal.
+- False positives on held-out event 4: 113 normal windows were predicted failure-risk.
+- Why the current model is not deployment-ready: event-aware generalization to held-out failure event 4 failed.
+- Missing values: 1,470 missing cells across 15 standard-deviation feature columns, 98 missing values per listed column.
+- Outliers: existing EDA includes boxplot-style class-wise sensor distribution plots, but no numerical outlier counts were exported and no outlier-removal rule was applied.
+- References and acknowledgments: MetroPT-3 UCI dataset, scikit-learn, pandas, NumPy, matplotlib, seaborn, course guideline PDF, Python libraries, and AI-assisted coding/report/debugging support.
+
+## 14. COEN 330 Guideline Audit Notes
+
+The official course guideline PDF is stored at `docs/COEN330_Project_Guidelines.pdf` and should be treated as the source of truth for final project requirements.
+
+Derived project-management documents:
+
+- `docs/guideline_checklist.md`: practical checklist of PDF requirements.
+- `docs/guideline_audit.md`: current repository audit against the PDF, with evidence paths and recommended fixes.
+
+Audit summary:
+
+- Core ML workflow is mostly in place: dataset instructions, preprocessing, EDA, five models, validation-only tuning, event-aware evaluation, stratified optimistic baseline, results tables, plots, and demo.
+- Final report draft now follows the 15 required sections and includes placeholders for five team members, references, source/tool acknowledgments, feature interpretation limitations, outlier/missing-value discussion, and qualitative error analysis.
+- Final submission work remains incomplete: final report PDF is still missing, team member placeholders must be replaced with final names/contributions, and the Moodle ZIP package has not been prepared.
+- Optional remaining audit items include PR-AUC for imbalanced classification and richer per-window qualitative examples if generated without changing the current methodology.
+
+No training, evaluation, labels, failure windows, split logic, raw/processed CSV files, or model artifacts were changed while creating the checklist and audit.
