@@ -1,0 +1,235 @@
+Full reproducibility run started: 2026-06-12T23:36:39-04:00
+Working directory: /home/niraj/Documents/MetroPT3_Project
+
+===== python -m src.preprocessing =====
+Loading raw data from /home/niraj/Documents/MetroPT3_Project/data/raw/MetroPT3(AirCompressor).csv
+Raw data shape: (1516948, 17)
+Detected timestamp column: timestamp
+Creating 1-minute window features
+Number of 1-minute windows: 252720
+Adding binary failure-risk target from configured failure windows
+Output path: /home/niraj/Documents/MetroPT3_Project/data/processed/windowed_labeled_data.csv
+Final shape: (252720, 78)
+Class balance:
+  0: 247520 (97.94%)
+  1: 5200 (2.06%)
+===== exit code: 0 =====
+
+===== python -m src.eda =====
+Processed dataset: /home/niraj/Documents/MetroPT3_Project/data/processed/windowed_labeled_data.csv
+Processed dataset shape: (252720, 78)
+Selected correlation features: dv_pressure_min, dv_pressure_mean, dv_pressure_last, dv_pressure_max, dv_eletric_min, comp_max, h1_max, mpg_max, dv_eletric_mean, comp_mean, h1_mean, mpg_mean
+Selected distribution features: dv_pressure_mean, dv_eletric_mean, comp_mean, h1_mean, mpg_mean, dv_pressure_min
+Saved plot to /home/niraj/Documents/MetroPT3_Project/results/plots/class_balance.png
+Saved plot to /home/niraj/Documents/MetroPT3_Project/results/plots/split_class_balance.png
+Saved plot to /home/niraj/Documents/MetroPT3_Project/results/plots/sensor_correlation_heatmap.png
+Saved plot to /home/niraj/Documents/MetroPT3_Project/results/plots/failure_windows_timeline.png
+Saved plot to /home/niraj/Documents/MetroPT3_Project/results/plots/key_sensor_distributions.png
+Saved EDA summary to /home/niraj/Documents/MetroPT3_Project/results/eda_summary.csv
+Saved event summary to /home/niraj/Documents/MetroPT3_Project/results/event_summary.csv
+===== exit code: 0 =====
+
+===== python -m src.train =====
+Processed dataset: /home/niraj/Documents/MetroPT3_Project/data/processed/windowed_labeled_data.csv
+Processed dataset shape: (252720, 78)
+Train shape: (144412, 78)
+Validation shape: (30721, 78)
+Test shape: (77587, 78)
+Split strategy: event-aware blocked split
+Train failure events: [1, 2]
+Validation failure events: [3]
+Test failure events: [4]
+Event 1: event=2020-04-17 23:00:00 to 2020-04-18 23:59:00, assigned block=2020-02-01 00:00:00 to 2020-05-09 11:14:30
+Event 2: event=2020-05-29 22:30:00 to 2020-05-30 06:00:00, assigned block=2020-05-09 11:14:30 to 2020-06-02 07:30:00
+Event 3: event=2020-06-05 09:00:00 to 2020-06-07 14:30:00, assigned block=2020-06-02 07:30:00 to 2020-06-26 14:00:00
+Event 4: event=2020-07-15 13:30:00 to 2020-07-15 19:00:00, assigned block=2020-06-26 14:00:00 to 2020-09-01 03:59:00.000000001
+Train class balance: class 0: 142465 (98.65%), class 1: 1947 (1.35%)
+Validation class balance: class 0: 27798 (90.49%), class 1: 2923 (9.51%)
+Test class balance: class 0: 77257 (99.57%), class 1: 330 (0.43%)
+window_start is used only for sorting/splitting and is not a model feature.
+Threshold tuning uses validation probabilities only. Test data is not used for selection.
+
+Validation metrics and threshold diagnostics:
+
+Training Logistic Regression baseline
+Logistic Regression baseline validation probability min/mean/max: 0.000000/0.147957/1.000000
+Logistic Regression baseline default threshold 0.50: precision=0.6209, recall=0.9631, f1=0.7550, f2=0.8674, predicted_normal=26187, predicted_failure=4534
+Logistic Regression baseline validation default 0.50 confusion matrix [[tn, fp], [fn, tp]]:
+  [[26079, 1719], [108, 2815]]
+Logistic Regression baseline best validation F1 threshold 0.61: precision=0.7233, recall=0.9507, f1=0.8216, f2=0.8945, predicted_normal=26879, predicted_failure=3842
+Logistic Regression baseline validation best-F1 threshold confusion matrix [[tn, fp], [fn, tp]]:
+  [[26735, 1063], [144, 2779]]
+Logistic Regression baseline best validation F2 threshold 0.61: precision=0.7233, recall=0.9507, f1=0.8216, f2=0.8945, predicted_normal=26879, predicted_failure=3842
+Logistic Regression baseline validation best-F2 threshold confusion matrix [[tn, fp], [fn, tp]]:
+  [[26735, 1063], [144, 2779]]
+
+Training Decision Tree
+Decision Tree best CV params: {'classifier__max_depth': 4, 'classifier__min_samples_leaf': 1}
+Decision Tree validation probability min/mean/max: 0.000000/0.066301/0.999051
+Decision Tree default threshold 0.50: precision=0.9899, recall=0.3346, f1=0.5001, f2=0.3856, predicted_normal=29733, predicted_failure=988
+Decision Tree validation default 0.50 confusion matrix [[tn, fp], [fn, tp]]:
+  [[27788, 10], [1945, 978]]
+Decision Tree best validation F1 threshold 0.13: precision=0.9899, recall=0.3346, f1=0.5001, f2=0.3856, predicted_normal=29733, predicted_failure=988
+Decision Tree validation best-F1 threshold confusion matrix [[tn, fp], [fn, tp]]:
+  [[27788, 10], [1945, 978]]
+Decision Tree best validation F2 threshold 0.13: precision=0.9899, recall=0.3346, f1=0.5001, f2=0.3856, predicted_normal=29733, predicted_failure=988
+Decision Tree validation best-F2 threshold confusion matrix [[tn, fp], [fn, tp]]:
+  [[27788, 10], [1945, 978]]
+
+Training Random Forest
+Random Forest best CV params: {'classifier__max_depth': 8, 'classifier__min_samples_leaf': 1}
+Random Forest validation probability min/mean/max: 0.000000/0.084554/0.878384
+Random Forest default threshold 0.50: precision=0.9934, recall=0.3626, f1=0.5313, f2=0.4154, predicted_normal=29654, predicted_failure=1067
+Random Forest validation default 0.50 confusion matrix [[tn, fp], [fn, tp]]:
+  [[27791, 7], [1863, 1060]]
+Random Forest best validation F1 threshold 0.31: precision=0.9091, recall=0.3969, f1=0.5525, f2=0.4473, predicted_normal=29445, predicted_failure=1276
+Random Forest validation best-F1 threshold confusion matrix [[tn, fp], [fn, tp]]:
+  [[27682, 116], [1763, 1160]]
+Random Forest best validation F2 threshold 0.19: precision=0.6073, recall=0.4550, f1=0.5202, f2=0.4790, predicted_normal=28531, predicted_failure=2190
+Random Forest validation best-F2 threshold confusion matrix [[tn, fp], [fn, tp]]:
+  [[26938, 860], [1593, 1330]]
+
+Training Extra Trees
+Extra Trees validation probability min/mean/max: 0.000000/0.035915/0.720000
+Extra Trees default threshold 0.50: precision=0.1063, recall=0.0253, f1=0.0409, f2=0.0299, predicted_normal=30025, predicted_failure=696
+Extra Trees validation default 0.50 confusion matrix [[tn, fp], [fn, tp]]:
+  [[27176, 622], [2849, 74]]
+Extra Trees best validation F1 threshold 0.04: precision=0.6171, recall=0.7958, f1=0.6952, f2=0.7522, predicted_normal=26952, predicted_failure=3769
+Extra Trees validation best-F1 threshold confusion matrix [[tn, fp], [fn, tp]]:
+  [[26355, 1443], [597, 2326]]
+Extra Trees best validation F2 threshold 0.03: precision=0.5851, recall=0.8385, f1=0.6893, f2=0.7717, predicted_normal=26532, predicted_failure=4189
+Extra Trees validation best-F2 threshold confusion matrix [[tn, fp], [fn, tp]]:
+  [[26060, 1738], [472, 2451]]
+
+Training HistGradientBoostingClassifier
+HistGradientBoostingClassifier best CV params: {'classifier__learning_rate': 0.05, 'classifier__max_leaf_nodes': 31}
+HistGradientBoostingClassifier validation probability min/mean/max: 0.000088/0.042909/0.990838
+HistGradientBoostingClassifier default threshold 0.50: precision=0.9993, recall=0.4930, f1=0.6603, f2=0.5486, predicted_normal=29279, predicted_failure=1442
+HistGradientBoostingClassifier validation default 0.50 confusion matrix [[tn, fp], [fn, tp]]:
+  [[27797, 1], [1482, 1441]]
+HistGradientBoostingClassifier best validation F1 threshold 0.11: precision=0.9705, recall=0.5060, f1=0.6652, f2=0.5595, predicted_normal=29197, predicted_failure=1524
+HistGradientBoostingClassifier validation best-F1 threshold confusion matrix [[tn, fp], [fn, tp]]:
+  [[27753, 45], [1444, 1479]]
+HistGradientBoostingClassifier best validation F2 threshold 0.11: precision=0.9705, recall=0.5060, f1=0.6652, f2=0.5595, predicted_normal=29197, predicted_failure=1524
+HistGradientBoostingClassifier validation best-F2 threshold confusion matrix [[tn, fp], [fn, tp]]:
+  [[27753, 45], [1444, 1479]]
+
+Model selection strategy comparison:
+Best default-threshold validation F1: Logistic Regression baseline (threshold=0.50, f1=0.7550)
+Best tuned-threshold validation F1: Logistic Regression baseline (threshold=0.61, f1=0.8216)
+Best tuned-threshold validation F2: Logistic Regression baseline (threshold=0.61, f2=0.8945)
+
+Selected final model: Logistic Regression baseline using validation_f1_threshold_tuned at threshold 0.61
+Final held-out event-4 test metrics; accuracy is secondary:
+                       model            selection_strategy  threshold  accuracy  precision  recall  f1  f2    tn  fp  fn  tp  predicted_normal_count  predicted_failure_count  roc_auc  test_probability_min  test_probability_mean  test_probability_max
+Logistic Regression baseline validation_f1_threshold_tuned       0.61   0.99429        0.0     0.0 0.0 0.0 77144 113 330   0                   77474                      113 0.120876          1.081466e-22               0.024688              0.999985
+Final test probability min/mean/max: 0.000000/0.024688/0.999985
+Final event-4 test confusion matrix [[tn, fp], [fn, tp]]:
+  [[77144, 113], [330, 0]]
+Saved validation metrics table to /home/niraj/Documents/MetroPT3_Project/results/metrics_table.csv
+Saved threshold table to /home/niraj/Documents/MetroPT3_Project/results/threshold_table.csv
+Saved final model to /home/niraj/Documents/MetroPT3_Project/models/final_model.joblib
+Saved final test metrics to /home/niraj/Documents/MetroPT3_Project/results/test_metrics.csv
+Saved final test confusion matrix plot to /home/niraj/Documents/MetroPT3_Project/results/plots/confusion_matrix.png
+Saved validation probability plot to /home/niraj/Documents/MetroPT3_Project/results/plots/validation_probability_distribution.png
+Saved test probability plot to /home/niraj/Documents/MetroPT3_Project/results/plots/test_probability_distribution.png
+Saved validation precision-recall curve to /home/niraj/Documents/MetroPT3_Project/results/plots/precision_recall_curve.png
+Saved training output to /home/niraj/Documents/MetroPT3_Project/results/training_output.txt
+===== exit code: 0 =====
+
+===== python -m src.evaluate =====
+Processed dataset: /home/niraj/Documents/MetroPT3_Project/data/processed/windowed_labeled_data.csv
+Processed dataset shape: (252720, 78)
+Train shape: (144412, 78)
+Validation shape: (30721, 78)
+Test shape: (77587, 78)
+Split strategy: event-aware blocked split
+Train failure events: [1, 2]
+Validation failure events: [3]
+Test failure events: [4]
+Event 1: event=2020-04-17 23:00:00 to 2020-04-18 23:59:00, assigned block=2020-02-01 00:00:00 to 2020-05-09 11:14:30
+Event 2: event=2020-05-29 22:30:00 to 2020-05-30 06:00:00, assigned block=2020-05-09 11:14:30 to 2020-06-02 07:30:00
+Event 3: event=2020-06-05 09:00:00 to 2020-06-07 14:30:00, assigned block=2020-06-02 07:30:00 to 2020-06-26 14:00:00
+Event 4: event=2020-07-15 13:30:00 to 2020-07-15 19:00:00, assigned block=2020-06-26 14:00:00 to 2020-09-01 03:59:00.000000001
+Test class balance: class 0: 77257 (99.57%), class 1: 330 (0.43%)
+window_start is used only for sorting/splitting and is not a model feature.
+              precision    recall  f1-score   support
+
+      normal       1.00      1.00      1.00     77257
+failure_risk       0.00      0.00      0.00       330
+
+    accuracy                           0.99     77587
+   macro avg       0.50      0.50      0.50     77587
+weighted avg       0.99      0.99      0.99     77587
+
+Final held-out event-4 test metrics; accuracy is secondary:
+                       model            selection_strategy  threshold  accuracy  precision  recall  f1  f2    tn  fp  fn  tp  predicted_normal_count  predicted_failure_count  roc_auc  test_probability_min  test_probability_mean  test_probability_max
+Logistic Regression baseline validation_f1_threshold_tuned       0.61   0.99429        0.0     0.0 0.0 0.0 77144 113 330   0                   77474                      113 0.120876          1.081466e-22               0.024688              0.999985
+Final threshold selected on validation: 0.61; predicted_normal=77474, predicted_failure=113
+Test probability min/mean/max: 0.000000/0.024688/0.999985
+Saved final test metrics to /home/niraj/Documents/MetroPT3_Project/results/test_metrics.csv
+Saved plot to /home/niraj/Documents/MetroPT3_Project/results/plots/confusion_matrix.png
+===== exit code: 0 =====
+
+===== python -m src.stratified_baseline =====
+Processed dataset: /home/niraj/Documents/MetroPT3_Project/data/processed/windowed_labeled_data.csv
+Processed dataset shape: (252720, 78)
+Feature count after dropping target/window_start: 76
+Split strategy: stratified random window-level train/test split
+Train shape: (202176, 76)
+Test shape: (50544, 76)
+Train class balance: class 0: 198016 (97.94%), class 1: 4160 (2.06%)
+Test class balance: class 0: 49504 (97.94%), class 1: 1040 (2.06%)
+window_start is used only by preprocessing and is not a model feature.
+Optimistic window-level comparison only: this stratified split mixes windows from the same failure events across train/test and can overestimate deployment performance.
+
+Training Logistic Regression baseline
+Logistic Regression baseline: accuracy=0.9636, precision=0.3573, recall=0.9615, f1=0.5210, f2=0.7185, roc_auc=0.9849
+Logistic Regression baseline confusion matrix [[tn, fp], [fn, tp]]: [[47705, 1799], [40, 1000]]
+
+Training Decision Tree
+Decision Tree: accuracy=0.9951, precision=0.8421, recall=0.9385, f1=0.8877, f2=0.9175, roc_auc=0.9687
+Decision Tree confusion matrix [[tn, fp], [fn, tp]]: [[49321, 183], [64, 976]]
+
+Training Random Forest
+Random Forest: accuracy=0.9963, precision=0.8638, recall=0.9760, f1=0.9165, f2=0.9513, roc_auc=0.9950
+Random Forest confusion matrix [[tn, fp], [fn, tp]]: [[49344, 160], [25, 1015]]
+
+Training Extra Trees
+Extra Trees: accuracy=0.9963, precision=0.8695, recall=0.9673, f1=0.9158, f2=0.9460, roc_auc=0.9926
+Extra Trees confusion matrix [[tn, fp], [fn, tp]]: [[49353, 151], [34, 1006]]
+
+Training HistGradientBoostingClassifier
+HistGradientBoostingClassifier: accuracy=0.9955, precision=0.8301, recall=0.9817, f1=0.8996, f2=0.9471, roc_auc=0.9986
+HistGradientBoostingClassifier confusion matrix [[tn, fp], [fn, tp]]: [[49295, 209], [19, 1021]]
+
+Saved stratified baseline metrics to /home/niraj/Documents/MetroPT3_Project/results/stratified_baseline_metrics.csv
+Saved stratified baseline confusion matrix plot to /home/niraj/Documents/MetroPT3_Project/results/plots/stratified_baseline_confusion_matrix.png
+===== exit code: 0 =====
+
+===== python demo/demo.py =====
+MetroPT-3 failure-risk demo
+Processed data: /home/niraj/Documents/MetroPT3_Project/data/processed/windowed_labeled_data.csv
+Saved model: /home/niraj/Documents/MetroPT3_Project/models/final_model.joblib
+Feature columns used: 76
+Threshold used: 0.61
+Threshold source: /home/niraj/Documents/MetroPT3_Project/results/threshold_table.csv (best_f1_threshold)
+
+sample type: normal
+window_start: 2020-02-01 00:00:00
+predicted probability of failure-risk: 0.016487
+threshold used: 0.61
+predicted class: normal (0)
+true class: normal (0)
+
+sample type: failure-risk
+window_start: 2020-04-17 23:00:00
+predicted probability of failure-risk: 0.641494
+threshold used: 0.61
+predicted class: failure-risk (1)
+true class: failure-risk (1)
+
+Note: This demo illustrates the pipeline usage on processed 1-minute windows. The current model is not deployment-ready because event-aware testing showed poor generalization to held-out failure event 4.
+===== exit code: 0 =====
+
+Full reproducibility run completed: 2026-06-12T23:38:33-04:00

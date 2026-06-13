@@ -304,3 +304,54 @@ Audit summary:
 - Optional remaining audit items include PR-AUC for imbalanced classification and richer per-window qualitative examples if generated without changing the current methodology.
 
 No training, evaluation, labels, failure windows, split logic, raw/processed CSV files, or model artifacts were changed while creating the checklist and audit.
+
+## 15. Comprehensive Pre-Report Reproducibility Review
+
+A full pre-report review was run from the project root and recorded in
+`docs/comprehensive_project_review.md`. The combined command output was saved in
+`results/full_reproducibility_run.txt`.
+
+Commands executed:
+
+```bash
+python -m src.preprocessing
+python -m src.eda
+python -m src.train
+python -m src.evaluate
+python -m src.stratified_baseline
+python demo/demo.py
+```
+
+Run result: all commands passed. The rerun confirmed the processed dataset, EDA outputs,
+event-aware training/validation/test split, selected model, held-out event-4 evaluation,
+stratified optimistic baseline, and command-line demo.
+
+Main outputs confirmed:
+
+- `data/processed/windowed_labeled_data.csv`
+- `models/final_model.joblib`
+- `results/metrics_table.csv`
+- `results/threshold_table.csv`
+- `results/test_metrics.csv`
+- `results/stratified_baseline_metrics.csv`
+- `results/eda_summary.csv`
+- `results/event_summary.csv`
+- required plots under `results/plots/`
+- `results/full_reproducibility_run.txt`
+
+The confirmed final model remains the Logistic Regression baseline selected by
+validation-tuned F1 at threshold 0.61. The final held-out event-4 test result remains
+poor: precision, recall, F1, and F2 are all 0.0, with 330 false negatives and 0 true
+positives. This must stay visible in the final report and cannot be described as
+deployment-ready performance.
+
+Remaining issues before final submission:
+
+- Generate `report/final_report.pdf`.
+- Replace team contribution placeholders with final names and verified contributions.
+- Prepare the Moodle ZIP package without raw data, processed CSV files, virtual
+  environments, or large model files.
+- Optionally add PR-AUC, quantified outlier counts, or per-window qualitative examples
+  only if those additions are intentionally regenerated from the current data without
+  changing labels, failure windows, event-aware split, model selection, thresholds, or
+  existing reported metrics.
