@@ -21,7 +21,7 @@ data/
   processed/       # generated processed datasets
 demo/              # small demo script
 models/            # generated trained model artifacts
-notebooks/         # exploratory notebooks
+notebooks/         # explanation and review notebooks
 report/            # report outline and draft
 results/plots/     # generated figures
 src/               # project source code
@@ -75,6 +75,20 @@ The demo loads `data/processed/windowed_labeled_data.csv`, applies
 `models/final_model.joblib`, and uses the selected threshold from
 `results/threshold_table.csv`. It is intended to illustrate pipeline usage on processed
 1-minute windows, not deployment-ready performance.
+
+## Notebooks
+
+The `notebooks/` folder contains review-oriented Jupyter notebooks that mirror the project workflow:
+
+- `01_project_overview.ipynb`
+- `02_preprocessing_and_eda.ipynb`
+- `03_model_training_and_validation.ipynb`
+- `04_evaluation_and_error_analysis.ipynb`
+- `05_demo_usage.ipynb`
+
+These notebooks are for explanation, project review, and final-submission readability. They load existing generated outputs from `results/` and `results/plots/` where possible.
+
+The reproducible pipeline remains in `src/`. Use `src/` scripts for preprocessing, EDA, training, evaluation, and the stratified baseline. Run commands from the project root.
 
 ## Labeling Note
 

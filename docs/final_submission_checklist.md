@@ -21,6 +21,7 @@ This checklist is for the final Moodle ZIP package. It does not change training,
 - Required result tables exist in `results/`: `metrics_table.csv`, `threshold_table.csv`, `test_metrics.csv`, `stratified_baseline_metrics.csv`, `eda_summary.csv`, and `event_summary.csv`.
 - Required plots exist in `results/plots/`: `class_balance.png`, `split_class_balance.png`, `sensor_correlation_heatmap.png`, `failure_windows_timeline.png`, `key_sensor_distributions.png`, `confusion_matrix.png`, `precision_recall_curve.png`, `validation_probability_distribution.png`, `test_probability_distribution.png`, and `stratified_baseline_confusion_matrix.png`.
 - Core source scripts exist in `src/`, including preprocessing, EDA, training, evaluation, modeling helpers, and the stratified baseline.
+- Review notebooks exist in `notebooks/` for project overview, preprocessing/EDA, training/validation, evaluation/error analysis, and demo usage.
 - Demo script exists in `demo/demo.py`.
 - Dataset source/instructions exist in `data/data_link.txt`.
 - `README.md`, `requirements.txt`, `PROJECT_LOG.md`, and `report/REPORT_NOTES.md` exist.
@@ -42,6 +43,7 @@ This checklist is for the final Moodle ZIP package. It does not change training,
 - `PROJECT_LOG.md`
 - `data/data_link.txt`
 - `src/`
+- `notebooks/`
 - `demo/`
 - `docs/`
 - `results/`

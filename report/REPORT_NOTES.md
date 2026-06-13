@@ -375,3 +375,17 @@ Documentation-only changes in this finalization:
 - Updated `PROJECT_LOG.md`, `report/REPORT_NOTES.md`, and `docs/comprehensive_project_review.md`.
 
 No training code, evaluation code, labels, failure windows, event-aware split logic, model selection logic, thresholds, reported metrics, or generated result CSV values were changed.
+
+## 17. Notebook Review Materials
+
+Documentation notebooks were added under `notebooks/` for final review and presentation:
+
+- `notebooks/01_project_overview.ipynb`
+- `notebooks/02_preprocessing_and_eda.ipynb`
+- `notebooks/03_model_training_and_validation.ipynb`
+- `notebooks/04_evaluation_and_error_analysis.ipynb`
+- `notebooks/05_demo_usage.ipynb`
+
+The notebooks are explanation-first and read existing generated outputs from `results/` and `results/plots/` where possible. They do not duplicate large training code and do not change preprocessing, labels, failure windows, event-aware split logic, model selection, thresholds, generated metrics, or generated plots.
+
+The final model remains the Logistic Regression baseline selected by validation-tuned F1 at threshold 0.61. The event-aware held-out event-4 result remains a failure to generalize: TP = 0, FN = 330, recall = 0.0, F1 = 0.0, and F2 = 0.0. The stratified baseline remains an optimistic window-level comparison only, not deployment performance.

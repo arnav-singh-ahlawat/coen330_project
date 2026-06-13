@@ -136,6 +136,14 @@ The main scripts are:
 | Stratified baseline | `src/stratified_baseline.py` | `python -m src.stratified_baseline` |
 | Demo | `demo/demo.py` | `python demo/demo.py` |
 
+The repository also includes explanation notebooks in `notebooks/`:
+`01_project_overview.ipynb`, `02_preprocessing_and_eda.ipynb`,
+`03_model_training_and_validation.ipynb`,
+`04_evaluation_and_error_analysis.ipynb`, and `05_demo_usage.ipynb`.
+These notebooks are for review and presentation. They mirror the workflow and load
+existing generated outputs from `results/` and `results/plots/`; the authoritative
+reproducible pipeline remains in `src/`.
+
 Dependencies are listed in `requirements.txt`: pandas, NumPy, scikit-learn, matplotlib, seaborn, joblib, and Jupyter. The random state used in the project code is 42 where applicable.
 
 The primary metrics are recall, F2-score, F1-score, precision, and the confusion matrix for the failure-risk class. Accuracy and ROC-AUC are also reported, but accuracy is not treated as the main metric because the data is highly imbalanced.
